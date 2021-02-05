@@ -1,6 +1,6 @@
 import {exec, ExecOptions} from '@actions/exec'
 
-export async function outdatedPackages(): Promise<Dependencies> {
+export async function getOutdatedPackages(): Promise<OutdatedPackages> {
   let output = ''
   let error = ''
 
@@ -19,17 +19,17 @@ export async function outdatedPackages(): Promise<Dependencies> {
 
   // TODO: error handling when error is emptyString
 
-  const dependencies = parseFlutterPubOutdatedOutput(output)
+  const outdatedPackages = parseIntoOutdatedPackages(output)
 
   return {
-    dependencies: dependencies.dependencies,
-    devDependencies: dependencies.devDependencies
+    dependencies: outdatedPackages.dependencies,
+    devDependencies: outdatedPackages.devDependencies
   }
 }
 
-export function parseFlutterPubOutdatedOutput(
+export function parseIntoOutdatedPackages(
   outputFromConsole: string
-): Dependencies {
+): OutdatedPackages {
   const dependencySections = splitIntoDependencySections(outputFromConsole)
 
   return {
@@ -133,7 +133,7 @@ export interface DependencySection {
   [index: number]: PackageVersionInfo
 }
 
-export interface Dependencies {
+export interface OutdatedPackages {
   dependencies: DependencySection
   devDependencies: DependencySection
   transitiveDependencies?: DependencySection
