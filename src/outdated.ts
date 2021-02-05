@@ -17,7 +17,12 @@ export async function getOutdatedPackages(): Promise<OutdatedPackages> {
 
   await exec('flutter', ['pub', 'outdated'], options)
 
-  // TODO: error handling when error is emptyString
+  if (error.length > 0) {
+    throw Error(`
+    an error occured during the execution of flutter pub outdated.
+    error: ${error}
+    `)
+  }
 
   const outdatedPackages = parseIntoOutdatedPackages(output)
 
