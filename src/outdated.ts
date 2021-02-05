@@ -1,7 +1,5 @@
 import {exec, ExecOptions} from '@actions/exec'
 
-// TODO: add tests
-
 export async function outdatedPackages(): Promise<void> {
   let output = ''
   let error = ''
@@ -20,17 +18,13 @@ export async function outdatedPackages(): Promise<void> {
   await exec('flutter', ['pub', 'outdated'], options)
 
   // TODO: error handling when error is emptyString
-  // eslint-disable-next-line no-console
-  console.log(error)
 
   const dependencies = parseFlutterPubOutdatedOutput(output)
 
   // TODO: only returns dependencies and devDependencies
-  // eslint-disable-next-line no-console
-  console.log(dependencies)
 }
 
-function parseFlutterPubOutdatedOutput(
+export function parseFlutterPubOutdatedOutput(
   outputFromConsole: string
 ): Dependencies {
   const dependencySections = splitIntoDependencySections(outputFromConsole)
@@ -43,7 +37,9 @@ function parseFlutterPubOutdatedOutput(
   }
 }
 
-function splitIntoDependencySections(fullText: string): DependencySection[] {
+export function splitIntoDependencySections(
+  fullText: string
+): DependencySection[] {
   // title of each dependency section
   const dependencySections = [
     'Dependencies',
@@ -67,8 +63,8 @@ function splitIntoDependencySections(fullText: string): DependencySection[] {
   for (let i = 0; i < sectionStartIndexes.length; i++) {
     let nextSection: string[]
 
-    // startIndex of current section
-    const startIndex = sectionStartIndexes[i]
+    // startIndex of current section (excluding the section title)
+    const startIndex = sectionStartIndexes[i] + 1
 
     // if current section is the last section
     if (i + 1 === sectionStartIndexes.length) {
@@ -84,11 +80,12 @@ function splitIntoDependencySections(fullText: string): DependencySection[] {
   return sections.map(parseIntoDependencySection)
 }
 
-function parseIntoDependencySection(section: string[]): DependencySection {
+export function parseIntoDependencySection(
+  section: string[]
+): DependencySection {
   const dependencies: string[][] = []
 
-  const rows = section.slice(1)
-  for (const row of rows) {
+  for (const row of section) {
     const dependencyDetails = splitAndRemoveEmptyString(row, ' ')
     if (dependencyDetails.length === 5) {
       dependencies.push(dependencyDetails)
@@ -98,7 +95,9 @@ function parseIntoDependencySection(section: string[]): DependencySection {
   return dependencies.map(parseIntoPackageVersionInfo)
 }
 
-function parseIntoPackageVersionInfo(dependency: string[]): PackageVersionInfo {
+export function parseIntoPackageVersionInfo(
+  dependency: string[]
+): PackageVersionInfo {
   return {
     packageName: dependency[0],
     currentVersion: dependency[1],
@@ -108,14 +107,18 @@ function parseIntoPackageVersionInfo(dependency: string[]): PackageVersionInfo {
   }
 }
 
-function splitAndRemoveEmptyString(
+export function splitAndRemoveEmptyString(
   targetString: string,
   separator: string
 ): string[] {
   return targetString.split(separator).filter(element => element !== '')
 }
 
-interface PackageVersionInfo {
+//
+// Interface
+//
+
+export interface PackageVersionInfo {
   packageName: string
   currentVersion: string
   upgradableVersion: string
@@ -123,11 +126,11 @@ interface PackageVersionInfo {
   latestVersion: string
 }
 
-interface DependencySection {
+export interface DependencySection {
   [index: number]: PackageVersionInfo
 }
 
-interface Dependencies {
+export interface Dependencies {
   dependencies: DependencySection
   devDependencies: DependencySection
   transitiveDependencies: DependencySection
