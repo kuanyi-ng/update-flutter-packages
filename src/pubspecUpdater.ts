@@ -1,4 +1,38 @@
-import {Pubspec} from './interfaces'
+import {PackageVersionInfo, Pubspec} from './interfaces'
+
+export function udpatePubspecDependencies(
+  pubspec: Pubspec,
+  dependencies: PackageVersionInfo[]
+): Pubspec {
+  let updatedPubspec = Object.assign({}, pubspec)
+  for (const packageInfo of dependencies) {
+    updatedPubspec = updatePackageToResolvableVersion(
+      updatedPubspec,
+      packageInfo.packageName,
+      packageInfo.resolvableVersion as string
+    )
+  }
+
+  return updatedPubspec
+}
+
+export function updatePubspecDevDependencies(
+  pubspec: Pubspec,
+  devDependencies: PackageVersionInfo[]
+): Pubspec {
+  let updatedPubspec = Object.assign({}, pubspec)
+
+  for (const packageInfo of devDependencies) {
+    updatedPubspec = updatePackageToResolvableVersion(
+      updatedPubspec,
+      packageInfo.packageName,
+      packageInfo.resolvableVersion as string,
+      true
+    )
+  }
+
+  return updatedPubspec
+}
 
 export function updatePackageToResolvableVersion(
   pubspec: Pubspec,
