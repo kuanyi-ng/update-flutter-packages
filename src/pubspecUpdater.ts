@@ -4,7 +4,8 @@ export function udpatePubspecDependencies(
   pubspec: Pubspec,
   dependencies: PackageVersionInfo[]
 ): Pubspec {
-  let updatedPubspec = Object.assign({}, pubspec)
+  let updatedPubspec = copyOfPubspec(pubspec)
+
   for (const packageInfo of dependencies) {
     updatedPubspec = updatePackageToResolvableVersion(
       updatedPubspec,
@@ -20,7 +21,7 @@ export function updatePubspecDevDependencies(
   pubspec: Pubspec,
   devDependencies: PackageVersionInfo[]
 ): Pubspec {
-  let updatedPubspec = Object.assign({}, pubspec)
+  let updatedPubspec = copyOfPubspec(pubspec)
 
   for (const packageInfo of devDependencies) {
     updatedPubspec = updatePackageToResolvableVersion(
@@ -48,7 +49,7 @@ export function updatePackageToResolvableVersion(
 
   const newVersion = `^${resolvableVersion}`
 
-  const updatedPubspec = Object.assign({}, pubspec)
+  const updatedPubspec = copyOfPubspec(pubspec)
 
   if (isDevDependencies) {
     updatedPubspec.dev_dependencies[packageName] = newVersion
@@ -57,4 +58,8 @@ export function updatePackageToResolvableVersion(
   }
 
   return updatedPubspec
+}
+
+function copyOfPubspec(pubspec: Pubspec): Pubspec {
+  return Object.assign({}, pubspec)
 }
