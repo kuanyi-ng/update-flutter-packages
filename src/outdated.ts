@@ -1,5 +1,5 @@
 import {exec, ExecOptions} from '@actions/exec'
-import {DependencySection, Packages, PackageVersionInfo} from './interfaces'
+import {Packages, PackageVersionInfo} from './interfaces'
 
 export async function getOutdatedPackages(): Promise<Packages> {
   let output = ''
@@ -46,7 +46,7 @@ export function parseIntoOutdatedPackages(outputFromConsole: string): Packages {
 
 export function splitIntoDependencySections(
   fullText: string
-): DependencySection[] {
+): PackageVersionInfo[][] {
   // title of each dependency section
   const dependencySections = [
     'Dependencies',
@@ -84,12 +84,12 @@ export function splitIntoDependencySections(
     sections.push(nextSection)
   }
 
-  return sections.map(parseIntoDependencySection)
+  return sections.map(parseIntoArrayOfPackageVersionInfo)
 }
 
-export function parseIntoDependencySection(
+export function parseIntoArrayOfPackageVersionInfo(
   section: string[]
-): DependencySection {
+): PackageVersionInfo[] {
   const dependencies: string[][] = []
 
   for (const row of section) {

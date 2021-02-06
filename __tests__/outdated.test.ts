@@ -46,8 +46,8 @@ describe('parseIntoDependencySection', () => {
       'Nulla id dui malesuada lacus porttitor pulvinar',
       'Nullam ac dolor ac sapien'
     ]
-    const result = outdated.parseIntoDependencySection(arrayOfString)
-    const expectedResult: interfaces.DependencySection = [
+    const result = outdated.parseIntoArrayOfPackageVersionInfo(arrayOfString)
+    const expectedResult: interfaces.PackageVersionInfo[] = [
       {
         packageName: 'Phasellus',
         currentVersion: 'vel',
@@ -82,7 +82,7 @@ describe('splitIntoDependencySections', () => {
       Mauris sed nulla et risus placerat blandit vel non turpis
     `
     const result = outdated.splitIntoDependencySections(multiLineString)
-    const expectedResult: interfaces.DependencySection[] = [
+    const expectedResult: interfaces.PackageVersionInfo[][] = [
       [
         {
           packageName: 'Cras',

@@ -6,15 +6,11 @@ export interface PackageVersionInfo {
   latestVersion?: string
 }
 
-export interface DependencySection {
-  [index: number]: PackageVersionInfo
-}
-
 export interface Packages {
-  dependencies: DependencySection
-  devDependencies: DependencySection
-  transitiveDependencies?: DependencySection
-  transitiveDevDependencies?: DependencySection
+  dependencies: PackageVersionInfo[]
+  devDependencies: PackageVersionInfo[]
+  transitiveDependencies?: PackageVersionInfo[]
+  transitiveDevDependencies?: PackageVersionInfo[]
 }
 
 // https://dart.dev/tools/pub/pubspec
