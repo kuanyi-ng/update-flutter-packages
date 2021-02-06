@@ -26,14 +26,18 @@ export interface Pubspec {
   repository?: string
   issue_tracker?: string
   documentation?: string
-  dependencies: object
-  dev_dependencies: object
+  dependencies: PubspecDependencies
+  dev_dependencies: PubspecDependencies
   dependency_overrides?: object
   environment: FlutterSdk
   executables?: object
   publish_to?: string
   flutter: object
   flutter_localizations?: FlutterSdk
+}
+
+interface PubspecDependencies {
+  [index: string]: string | FlutterSdk | null
 }
 
 interface FlutterSdk {
