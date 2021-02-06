@@ -1,7 +1,11 @@
-import {assert} from 'console'
 import * as fs from 'fs'
 import * as yaml from 'js-yaml'
-import {DependencySection, Packages, PackageVersionInfo} from './outdated'
+import {
+  DependencySection,
+  Packages,
+  PackageVersionInfo,
+  Pubspec
+} from './interfaces'
 
 export function getCurrentPackages(): Packages {
   const pathToPubSpec = './pubspec.yaml'
@@ -48,27 +52,4 @@ export function readYaml(pathToYamlFile: string): Pubspec {
   }
 
   return doc
-}
-
-// https://dart.dev/tools/pub/pubspec
-interface Pubspec {
-  name: string
-  version: string
-  description: string
-  homepage?: string
-  repository?: string
-  issue_tracker?: string
-  documentation?: string
-  dependencies: object
-  dev_dependencies: object
-  dependency_overrides?: object
-  environment: FlutterSdk
-  executables?: object
-  publish_to?: string
-  flutter: object
-  flutter_localizations?: FlutterSdk
-}
-
-interface FlutterSdk {
-  sdk: string
 }

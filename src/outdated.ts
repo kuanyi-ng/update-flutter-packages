@@ -1,4 +1,5 @@
 import {exec, ExecOptions} from '@actions/exec'
+import {DependencySection, Packages, PackageVersionInfo} from './interfaces'
 
 export async function getOutdatedPackages(): Promise<Packages> {
   let output = ''
@@ -118,27 +119,4 @@ export function splitAndRemoveEmptyString(
   separator: string
 ): string[] {
   return targetString.split(separator).filter(element => element !== '')
-}
-
-//
-// Interface
-//
-
-export interface PackageVersionInfo {
-  packageName: string
-  currentVersion: string
-  upgradableVersion?: string
-  resolvableVersion?: string
-  latestVersion?: string
-}
-
-export interface DependencySection {
-  [index: number]: PackageVersionInfo
-}
-
-export interface Packages {
-  dependencies: DependencySection
-  devDependencies: DependencySection
-  transitiveDependencies?: DependencySection
-  transitiveDevDependencies?: DependencySection
 }
