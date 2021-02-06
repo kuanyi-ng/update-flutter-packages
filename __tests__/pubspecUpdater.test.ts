@@ -151,3 +151,58 @@ describe('udpatePubspecDependencies', () => {
     expect(result).toStrictEqual(expectedResult)
   })
 })
+
+describe('udpatePubspecDevDependencies', () => {
+  const pubspec = {
+    name: 'test',
+    version: '0.0.0',
+    description: 'pubspec for testing',
+    environment: {sdk: '>=2.7.0 <3.0.0'},
+    dependencies: {
+      flutter: {sdk: 'flutter'},
+      cupertino_icons: '^1.0.0',
+      provider: '4.3.2+3'
+    },
+    dev_dependencies: {
+      effective_dart: '^1.3.0',
+      flutter_test: {sdk: 'flutter'}
+    },
+    flutter: {
+      'uses-material-design': true,
+      assets: []
+    }
+  }
+
+  const dependencies: PackageVersionInfo[] = [
+    {
+      packageName: 'effective_dart',
+      currentVersion: '1.3.0',
+      resolvableVersion: '2.0.0'
+    }
+  ]
+
+  it('updates upgradable dependencies', () => {
+    const result = updater.updatePubspecDevDependencies(pubspec, dependencies)
+    const expectedResult = {
+      name: 'test',
+      version: '0.0.0',
+      description: 'pubspec for testing',
+      environment: {sdk: '>=2.7.0 <3.0.0'},
+      dependencies: {
+        flutter: {sdk: 'flutter'},
+        cupertino_icons: '^1.0.0',
+        provider: '4.3.2+3'
+      },
+      dev_dependencies: {
+        effective_dart: '^2.0.0',
+        flutter_test: {sdk: 'flutter'}
+      },
+      flutter: {
+        'uses-material-design': true,
+        assets: []
+      }
+    }
+
+    expect(result).toStrictEqual(expectedResult)
+  })
+})
