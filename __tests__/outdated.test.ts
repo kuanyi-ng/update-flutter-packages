@@ -1,4 +1,5 @@
 import * as outdated from '../src/outdated'
+import * as interfaces from '../src/interfaces'
 
 describe('splitAndRemoveEmptyString', () => {
   it('split a long string into string[] and remove empty string', () => {
@@ -26,7 +27,7 @@ describe('parseIntoPackageVersionInfo', () => {
   it('convert an array of string (length of 5) into PackageVersionInfo', () => {
     const arrayOfString = ['Donec', 'nec', 'libero', 'et', 'lorem']
     const result = outdated.parseIntoPackageVersionInfo(arrayOfString)
-    const expectedResult: outdated.PackageVersionInfo = {
+    const expectedResult: interfaces.PackageVersionInfo = {
       packageName: 'Donec',
       currentVersion: 'nec',
       upgradableVersion: 'libero',
@@ -46,7 +47,7 @@ describe('parseIntoDependencySection', () => {
       'Nullam ac dolor ac sapien'
     ]
     const result = outdated.parseIntoDependencySection(arrayOfString)
-    const expectedResult: outdated.DependencySection = [
+    const expectedResult: interfaces.DependencySection = [
       {
         packageName: 'Phasellus',
         currentVersion: 'vel',
@@ -81,7 +82,7 @@ describe('splitIntoDependencySections', () => {
       Mauris sed nulla et risus placerat blandit vel non turpis
     `
     const result = outdated.splitIntoDependencySections(multiLineString)
-    const expectedResult: outdated.DependencySection[] = [
+    const expectedResult: interfaces.DependencySection[] = [
       [
         {
           packageName: 'Cras',
