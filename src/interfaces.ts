@@ -6,15 +6,11 @@ export interface PackageVersionInfo {
   latestVersion?: string
 }
 
-export interface DependencySection {
-  [index: number]: PackageVersionInfo
-}
-
 export interface Packages {
-  dependencies: DependencySection
-  devDependencies: DependencySection
-  transitiveDependencies?: DependencySection
-  transitiveDevDependencies?: DependencySection
+  dependencies: PackageVersionInfo[]
+  devDependencies: PackageVersionInfo[]
+  transitiveDependencies?: PackageVersionInfo[]
+  transitiveDevDependencies?: PackageVersionInfo[]
 }
 
 // https://dart.dev/tools/pub/pubspec
@@ -26,14 +22,18 @@ export interface Pubspec {
   repository?: string
   issue_tracker?: string
   documentation?: string
-  dependencies: object
-  dev_dependencies: object
+  dependencies: PubspecDependencies
+  dev_dependencies: PubspecDependencies
   dependency_overrides?: object
   environment: FlutterSdk
   executables?: object
   publish_to?: string
   flutter: object
   flutter_localizations?: FlutterSdk
+}
+
+interface PubspecDependencies {
+  [index: string]: string | FlutterSdk | null
 }
 
 interface FlutterSdk {

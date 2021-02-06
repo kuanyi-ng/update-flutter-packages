@@ -1,11 +1,6 @@
 import * as fs from 'fs'
 import * as yaml from 'js-yaml'
-import {
-  DependencySection,
-  Packages,
-  PackageVersionInfo,
-  Pubspec
-} from './interfaces'
+import {Packages, PackageVersionInfo, Pubspec} from './interfaces'
 
 export function getCurrentPackages(): Packages {
   const pathToPubSpec = './pubspec.yaml'
@@ -21,7 +16,9 @@ export function getCurrentPackages(): Packages {
   }
 }
 
-function parseIntoDependencySection(dependencies: object): DependencySection {
+function parseIntoDependencySection(
+  dependencies: object
+): PackageVersionInfo[] {
   const packageNameToSkip = ['flutter', 'footer', 'flutter_test']
 
   const dependencySection = []
@@ -39,7 +36,11 @@ function parseIntoDependencySection(dependencies: object): DependencySection {
   return dependencySection
 }
 
-export function readYaml(pathToYamlFile: string): Pubspec {
+export function readPubspec(): Pubspec {
+  return readYaml('./pubspec.yaml')
+}
+
+function readYaml(pathToYamlFile: string): Pubspec {
   let doc
 
   try {
