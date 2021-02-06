@@ -127,7 +127,7 @@ describe('udpatePubspecDependencies', () => {
   ]
 
   it('updates upgradable dependencies', () => {
-    const result = updater.udpatePubspecDependencies(pubspec, dependencies)
+    const result = updater.updatePubspecDependencies(pubspec, dependencies)
     const expectedResult = {
       name: 'test',
       version: '0.0.0',
