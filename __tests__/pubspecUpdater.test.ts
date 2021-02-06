@@ -1,8 +1,8 @@
-import {PackageVersionInfo, Pubspec} from '../src/interfaces'
+import * as interfaces from '../src/interfaces'
 import * as updater from '../src/pubspecUpdater'
 
 describe('updatePackageToResolvableVersion', () => {
-  let pubspec: Pubspec
+  let pubspec: interfaces.Pubspec
 
   beforeEach(() => {
     pubspec = {
@@ -113,7 +113,7 @@ describe('udpatePubspecDependencies', () => {
     }
   }
 
-  const dependencies: PackageVersionInfo[] = [
+  const dependencies: interfaces.PackageVersionInfo[] = [
     {
       packageName: 'cupertino_icons',
       currentVersion: '1.0.0',
@@ -173,7 +173,7 @@ describe('udpatePubspecDevDependencies', () => {
     }
   }
 
-  const dependencies: PackageVersionInfo[] = [
+  const dependencies: interfaces.PackageVersionInfo[] = [
     {
       packageName: 'effective_dart',
       currentVersion: '1.3.0',
@@ -192,6 +192,79 @@ describe('udpatePubspecDevDependencies', () => {
         flutter: {sdk: 'flutter'},
         cupertino_icons: '^1.0.0',
         provider: '4.3.2+3'
+      },
+      dev_dependencies: {
+        effective_dart: '^2.0.0',
+        flutter_test: {sdk: 'flutter'}
+      },
+      flutter: {
+        'uses-material-design': true,
+        assets: []
+      }
+    }
+
+    expect(result).toStrictEqual(expectedResult)
+  })
+})
+
+describe('updatePubspecToResolvableVersion', () => {
+  const pubspec = {
+    name: 'test',
+    version: '0.0.0',
+    description: 'pubspec for testing',
+    environment: {sdk: '>=2.7.0 <3.0.0'},
+    dependencies: {
+      flutter: {sdk: 'flutter'},
+      cupertino_icons: '^1.0.0',
+      provider: '4.3.2+3'
+    },
+    dev_dependencies: {
+      effective_dart: '^1.3.0',
+      flutter_test: {sdk: 'flutter'}
+    },
+    flutter: {
+      'uses-material-design': true,
+      assets: []
+    }
+  }
+  const dependencies: interfaces.PackageVersionInfo[] = [
+    {
+      packageName: 'cupertino_icons',
+      currentVersion: '1.0.0',
+      resolvableVersion: '2.0.0'
+    },
+    {
+      packageName: 'provider',
+      currentVersion: '4.3.2+3',
+      resolvableVersion: '5.0.0'
+    }
+  ]
+  const devDependencies: interfaces.PackageVersionInfo[] = [
+    {
+      packageName: 'effective_dart',
+      currentVersion: '1.3.0',
+      resolvableVersion: '2.0.0'
+    }
+  ]
+  const outdatedPackages: interfaces.Packages = {
+    dependencies,
+    devDependencies
+  }
+
+  it('updates both dependencies and devDependencies', () => {
+    const result = updater.updatePubspecToResolvableVersion(
+      pubspec,
+      outdatedPackages
+    )
+    const expectedResult = {
+      name: 'test',
+      version: '0.0.0',
+      description: 'pubspec for testing',
+      environment: {sdk: '>=2.7.0 <3.0.0'},
+      dependencies: {
+        flutter: {sdk: 'flutter'},
+        cupertino_icons: '^2.0.0',
+        provider: '^5.0.0'
       },
       dev_dependencies: {
         effective_dart: '^2.0.0',

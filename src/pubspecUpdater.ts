@@ -1,4 +1,4 @@
-import {PackageVersionInfo, Pubspec} from './interfaces'
+import {Packages, PackageVersionInfo, Pubspec} from './interfaces'
 
 export function udpatePubspecDependencies(
   pubspec: Pubspec,
@@ -56,6 +56,24 @@ export function updatePackageToResolvableVersion(
   } else {
     updatedPubspec.dependencies[packageName] = newVersion
   }
+
+  return updatedPubspec
+}
+
+export function updatePubspecToResolvableVersion(
+  pubspec: Pubspec,
+  outdatedPackages: Packages
+): Pubspec {
+  let updatedPubspec = copyOfPubspec(pubspec)
+
+  updatedPubspec = udpatePubspecDependencies(
+    pubspec,
+    outdatedPackages.dependencies
+  )
+  updatedPubspec = updatePubspecDevDependencies(
+    pubspec,
+    outdatedPackages.devDependencies
+  )
 
   return updatedPubspec
 }
