@@ -6,7 +6,7 @@ export function writePubspec(pubspec: Pubspec): void {
   writeYaml(pubspec, './pubspec.yaml')
 }
 
-export function writeYaml(obj: object, pathToYamlFile: string): void {
+function writeYaml(obj: object, pathToYamlFile: string): void {
   try {
     const output = yaml.dump(obj)
     fs.writeFileSync(pathToYamlFile, output)

@@ -1,8 +1,8 @@
 import * as core from '@actions/core'
 import {getOutdatedPackages} from './outdated'
-import {getCurrentPackages, readPubspec} from './pubspecReader'
+import {readPubspec} from './pubspecReader'
 import {updatePubspecToResolvableVersion} from './pubspecUpdater'
-import {writePubspec, writeYaml} from './pubspecWriter'
+import {writePubspec} from './pubspecWriter'
 
 async function run(): Promise<void> {
   try {
