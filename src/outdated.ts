@@ -107,11 +107,15 @@ export function parseIntoPackageVersionInfo(
 ): PackageVersionInfo {
   return {
     packageName: dependency[0],
-    currentVersion: dependency[1],
-    upgradableVersion: dependency[2],
-    resolvableVersion: dependency[3],
-    latestVersion: dependency[4]
+    currentVersion: refineVersionText(dependency[1]),
+    upgradableVersion: refineVersionText(dependency[2]),
+    resolvableVersion: refineVersionText(dependency[3]),
+    latestVersion: refineVersionText(dependency[4])
   }
+}
+
+function refineVersionText(versionText: string): string {
+  return versionText.replace('*', '')
 }
 
 export function splitAndRemoveEmptyString(
