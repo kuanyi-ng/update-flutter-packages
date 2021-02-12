@@ -8,8 +8,10 @@ async function run(): Promise<void> {
   try {
     // read pubspec.yaml
     const pubspec = readPubspec()
+
     // get outdated package
     const outdatedPackages = await getOutdatedPackages()
+
     // update pubspec
     const updatedPubspec = updatePubspecToResolvableVersion(
       pubspec,
