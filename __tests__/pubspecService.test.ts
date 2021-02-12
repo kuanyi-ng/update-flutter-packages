@@ -139,10 +139,7 @@ describe('updatePubspecToResolvableVersion', () => {
   }
 
   it('updates both dependencies and devDependencies', () => {
-    const result = pubspecService.updatePackages(
-      pubspec,
-      outdatedPackages
-    )
+    const result = pubspecService.updatePackages(pubspec, outdatedPackages)
     const expectedResult = YAML.parseDocument(`
     name: 'test'
     version: '0.0.0'
