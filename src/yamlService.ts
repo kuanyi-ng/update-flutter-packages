@@ -27,3 +27,5 @@ export function writeYaml(
     `)
   }
 }
+
+export type Pubspec = YAML.Document.Parsed
