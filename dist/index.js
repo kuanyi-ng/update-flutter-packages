@@ -36,7 +36,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-/* eslint-disable @typescript-eslint/no-unused-vars */
 const core = __importStar(__webpack_require__(2186));
 const outdated_1 = __webpack_require__(2608);
 const pubspecService_1 = __webpack_require__(4525);
@@ -48,16 +47,22 @@ function run() {
         try {
             // read pubspec.yaml
             const pubspec = pubspecService_1.readPubspec(pathToPubspecFile);
-            // eslint-disable-next-line no-console
-            console.log(pubspec);
             // get outdated package
             const outdatedPackages = yield outdated_1.getOutdatedPackages();
-            // eslint-disable-next-line no-console
-            console.log(outdatedPackages);
-            //   // update pubspec
-            //   const updatedPubspec = updatePackages(pubspec, outdatedPackages)
-            //   // write to pubspec.yaml
-            //   writePubspec(updatedPubspec, pathToPubspecFile)
+            if (preferToSplitPrs) {
+                // update and open a new PR for each package
+                // eslint-disable-next-line no-console
+                console.log('preferToSplitPrs');
+            }
+            else {
+                // combine all packages' updates into one PR
+                // update pubspec
+                const updatedPubspec = pubspecService_1.updatePackages(pubspec, outdatedPackages);
+                // write to pubspec.yaml
+                pubspecService_1.writePubspec(updatedPubspec, pathToPubspecFile);
+                // eslint-disable-next-line no-console
+                console.log(pubspecService_1.readPubspec(pathToPubspecFile).toString());
+            }
         }
         catch (error) {
             core.setFailed(error.message);
