@@ -11,21 +11,21 @@ async function run(): Promise<void> {
   core.info(`${typeof pathToPubspecFile}, ${pathToPubspecFile}`)
   core.info(`${typeof preferToSplitPrs}, ${preferToSplitPrs}`)
 
-  // try {
-  //   // read pubspec.yaml
-  //   const pubspec = readPubspec()
+  try {
+    // read pubspec.yaml
+    const pubspec = readPubspec(pathToPubspecFile)
 
-  //   // get outdated package
-  //   const outdatedPackages = await getOutdatedPackages()
+    //   // get outdated package
+    //   const outdatedPackages = await getOutdatedPackages()
 
-  //   // update pubspec
-  //   const updatedPubspec = updatePackages(pubspec, outdatedPackages)
+    //   // update pubspec
+    //   const updatedPubspec = updatePackages(pubspec, outdatedPackages)
 
-  //   // write to pubspec.yaml
-  //   writePubspec(updatedPubspec)
-  // } catch (error) {
-  //   core.setFailed(error.message)
-  // }
+    //   // write to pubspec.yaml
+    //   writePubspec(updatedPubspec, pathToPubspecFile)
+  } catch (error) {
+    core.setFailed(error.message)
+  }
 }
 
 run()

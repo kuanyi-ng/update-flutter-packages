@@ -2,13 +2,11 @@ import YAML from 'yaml'
 import {Packages} from './interfaces'
 import {Pubspec, readYaml, writeYaml} from './yamlService'
 
-const pathToPubspec = './pubspec.yaml'
-
-export function readPubspec(): YAML.Document.Parsed {
+export function readPubspec(pathToPubspec: string): YAML.Document.Parsed {
   return readYaml(pathToPubspec)
 }
 
-export function writePubspec(pubspec: Pubspec): void {
+export function writePubspec(pubspec: Pubspec, pathToPubspec: string): void {
   writeYaml(pubspec, pathToPubspec)
 }
 
