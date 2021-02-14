@@ -6,8 +6,8 @@ import {readPubspec, writePubspec, updatePackages} from './pubspecService'
 async function run(): Promise<void> {
   const pathToPubspecFile = core.getInput('pathToPubspecFile')
   const preferToSplitPrs = core.getInput('preferToSplitPrs')
-  // eslint-disable-next-line no-console
-  console.log(pathToPubspecFile, preferToSplitPrs)
+
+  core.info(`${pathToPubspecFile}, ${preferToSplitPrs}`)
 
   // try {
   //   // read pubspec.yaml
