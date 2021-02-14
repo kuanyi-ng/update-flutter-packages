@@ -11,18 +11,17 @@ async function run(): Promise<void> {
   try {
     // read pubspec.yaml
     const pubspec = readPubspec(pathToPubspecFile)
-    // eslint-disable-next-line no-console
-    console.log(pubspec)
 
     // get outdated package
     const outdatedPackages = await getOutdatedPackages()
-    // eslint-disable-next-line no-console
-    console.log(outdatedPackages)
-    //   // update pubspec
-    //   const updatedPubspec = updatePackages(pubspec, outdatedPackages)
 
-    //   // write to pubspec.yaml
-    //   writePubspec(updatedPubspec, pathToPubspecFile)
+    // update pubspec
+    const updatedPubspec = updatePackages(pubspec, outdatedPackages)
+    // eslint-disable-next-line no-console
+    console.log(updatedPubspec.toString())
+
+    // write to pubspec.yaml
+    // writePubspec(updatedPubspec, pathToPubspecFile)
   } catch (error) {
     core.setFailed(error.message)
   }
