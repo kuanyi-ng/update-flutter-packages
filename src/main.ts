@@ -3,21 +3,25 @@ import {getOutdatedPackages} from './outdated'
 import {readPubspec, writePubspec, updatePackages} from './pubspecService'
 
 async function run(): Promise<void> {
-  try {
-    // read pubspec.yaml
-    const pubspec = readPubspec()
+  const pathToPubspecFile = core.getInput('pathToPubspecFile')
+  const preferToSplitPrs = core.getInput('preferToSplitPrs')
+  console.log(pathToPubspecFile, preferToSplitPrs)
 
-    // get outdated package
-    const outdatedPackages = await getOutdatedPackages()
+  // try {
+  //   // read pubspec.yaml
+  //   const pubspec = readPubspec()
 
-    // update pubspec
-    const updatedPubspec = updatePackages(pubspec, outdatedPackages)
+  //   // get outdated package
+  //   const outdatedPackages = await getOutdatedPackages()
 
-    // write to pubspec.yaml
-    writePubspec(updatedPubspec)
-  } catch (error) {
-    core.setFailed(error.message)
-  }
+  //   // update pubspec
+  //   const updatedPubspec = updatePackages(pubspec, outdatedPackages)
+
+  //   // write to pubspec.yaml
+  //   writePubspec(updatedPubspec)
+  // } catch (error) {
+  //   core.setFailed(error.message)
+  // }
 }
 
 run()

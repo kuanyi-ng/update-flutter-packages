@@ -1,11 +1,15 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Update Flutter Packages'
+description: 'Update pubspec.yaml based on results from $ flutter pub outdated'
+author: 'Kuan Yi Ng'
 inputs:
-  milliseconds: # change this
+  pathToPubspecFile:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'relative path to pubspec.yaml file from root directory'
+    default: './pubspec.yaml'
+  preferToSplitPrs:
+    required: true
+    description: 'split updates of each packages into respective pull requests when value is true'
+    default: 'true'
 runs:
   using: 'node12'
   main: 'dist/index.js'
