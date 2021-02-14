@@ -8,16 +8,16 @@ async function run(): Promise<void> {
   // change preferToSplitPrs (input) from string to boolean type
   const preferToSplitPrs = core.getInput('preferToSplitPrs') === 'true'
 
-  core.info(`${typeof pathToPubspecFile}, ${pathToPubspecFile}`)
-  core.info(`${typeof preferToSplitPrs}, ${preferToSplitPrs}`)
-
   try {
     // read pubspec.yaml
     const pubspec = readPubspec(pathToPubspecFile)
+    // eslint-disable-next-line no-console
+    console.log(pubspec)
 
-    //   // get outdated package
-    //   const outdatedPackages = await getOutdatedPackages()
-
+    // get outdated package
+    const outdatedPackages = await getOutdatedPackages()
+    // eslint-disable-next-line no-console
+    console.log(outdatedPackages)
     //   // update pubspec
     //   const updatedPubspec = updatePackages(pubspec, outdatedPackages)
 
