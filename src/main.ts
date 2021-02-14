@@ -5,9 +5,11 @@ import {readPubspec, writePubspec, updatePackages} from './pubspecService'
 
 async function run(): Promise<void> {
   const pathToPubspecFile = core.getInput('pathToPubspecFile')
-  const preferToSplitPrs = core.getInput('preferToSplitPrs')
+  // change preferToSplitPrs (input) from string to boolean type
+  const preferToSplitPrs = core.getInput('preferToSplitPrs') === 'true'
 
-  core.info(`${pathToPubspecFile}, ${preferToSplitPrs}`)
+  core.info(`${typeof pathToPubspecFile}, ${pathToPubspecFile}`)
+  core.info(`${typeof preferToSplitPrs}, ${preferToSplitPrs}`)
 
   // try {
   //   // read pubspec.yaml

@@ -41,8 +41,10 @@ const core = __importStar(__webpack_require__(186));
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const pathToPubspecFile = core.getInput('pathToPubspecFile');
-        const preferToSplitPrs = core.getInput('preferToSplitPrs');
-        core.info(`${pathToPubspecFile}, ${preferToSplitPrs}`);
+        // change preferToSplitPrs (input) from string to boolean type
+        const preferToSplitPrs = core.getInput('preferToSplitPrs') === 'true';
+        core.info(`${typeof pathToPubspecFile}, ${pathToPubspecFile}`);
+        core.info(`${typeof preferToSplitPrs}, ${preferToSplitPrs}`);
         // try {
         //   // read pubspec.yaml
         //   const pubspec = readPubspec()
