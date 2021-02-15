@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import {getOutdatedPackages} from './outdated'
+import {getOutdatedPackages} from './outdatedPackages'
 import {readPubspec, updateAllPackagesInPubspec} from './pubspecService'
 
 async function run(): Promise<void> {

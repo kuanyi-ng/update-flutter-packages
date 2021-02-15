@@ -37,7 +37,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__webpack_require__(2186));
-const outdated_1 = __webpack_require__(2608);
+const outdatedPackages_1 = __webpack_require__(6817);
 const pubspecService_1 = __webpack_require__(4525);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -46,7 +46,7 @@ function run() {
             core.info(`Reading pubspec yaml located at ${pathToPubspecFile}`);
             const pubspec = pubspecService_1.readPubspec(pathToPubspecFile);
             core.info('Get info about outdated packages');
-            const outdatedPackages = yield outdated_1.getOutdatedPackages();
+            const outdatedPackages = yield outdatedPackages_1.getOutdatedPackages();
             core.info('Update content of pubspec.yaml');
             pubspecService_1.updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages);
         }
@@ -60,7 +60,7 @@ run();
 
 /***/ }),
 
-/***/ 2608:
+/***/ 6817:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
