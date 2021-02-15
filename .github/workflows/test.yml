@@ -39,6 +39,7 @@ jobs:
         with:
           commit-message: 'update pubspec.yaml based on $ flutter pub outdated'
           branch: flutter-pub-outdated
+          base: main
           delete-branch: true
           title: 'Update Pubspec.yaml'
           body: 'update pubspec.yaml based on $ flutter pub outdated'
