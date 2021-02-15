@@ -1,22 +1,19 @@
-/* eslint-disable no-console */
 import * as core from '@actions/core'
-import {getOutdatedPackages} from './outdated'
+import {getOutdatedPackages} from './outdatedPackages'
 import {readPubspec, updateAllPackagesInPubspec} from './pubspecService'
 
 async function run(): Promise<void> {
   const pathToPubspecFile = core.getInput('pathToPubspecFile')
 
   try {
-    // read pubspec.yaml
+    core.info(`Reading pubspec yaml located at ${pathToPubspecFile}`)
     const pubspec = readPubspec(pathToPubspecFile)
 
-    // get outdated package
+    core.info('Get info about outdated packages')
     const outdatedPackages = await getOutdatedPackages()
-    console.log(outdatedPackages)
 
-    // combine all packages' updates into one PR
+    core.info('Update content of pubspec.yaml')
     updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages)
-    console.log(readPubspec(pathToPubspecFile).toString())
   } catch (error) {
     core.setFailed(error.message)
   }

@@ -1,4 +1,4 @@
-import * as outdated from '../src/outdated'
+import * as outdated from '../src/outdatedPackages'
 import * as interfaces from '../src/interfaces'
 
 describe('splitAndRemoveEmptyString', () => {
@@ -39,7 +39,7 @@ describe('parseIntoPackageVersionInfo', () => {
   })
 })
 
-describe('parseIntoDependencySection', () => {
+describe('parseIntoArrayOfPackageVersionInfo', () => {
   it('convert an array of string (without the first element) into DependencySection', () => {
     const arrayOfString = [
       'Phasellus vel mauris nec massa',

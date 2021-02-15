@@ -36,22 +36,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-/* eslint-disable no-console */
 const core = __importStar(__webpack_require__(2186));
-const outdated_1 = __webpack_require__(2608);
+const outdatedPackages_1 = __webpack_require__(6817);
 const pubspecService_1 = __webpack_require__(4525);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const pathToPubspecFile = core.getInput('pathToPubspecFile');
         try {
-            // read pubspec.yaml
+            core.info(`Reading pubspec yaml located at ${pathToPubspecFile}`);
             const pubspec = pubspecService_1.readPubspec(pathToPubspecFile);
-            // get outdated package
-            const outdatedPackages = yield outdated_1.getOutdatedPackages();
-            console.log(outdatedPackages);
-            // combine all packages' updates into one PR
+            core.info('Get info about outdated packages');
+            const outdatedPackages = yield outdatedPackages_1.getOutdatedPackages();
+            core.info('Update content of pubspec.yaml');
             pubspecService_1.updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages);
-            console.log(pubspecService_1.readPubspec(pathToPubspecFile).toString());
         }
         catch (error) {
             core.setFailed(error.message);
@@ -63,7 +60,7 @@ run();
 
 /***/ }),
 
-/***/ 2608:
+/***/ 6817:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
