@@ -32,5 +32,3 @@ jobs:
         run: flutter pub get
 
       - uses: ./
-        with:
-          preferToSplitPrs: true
