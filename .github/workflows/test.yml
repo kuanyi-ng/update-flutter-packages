@@ -33,4 +33,4 @@ jobs:
 
       - uses: ./
         with:
-          preferToSplitPrs: false
+          preferToSplitPrs: true
