@@ -37,11 +37,11 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          commit-message: 'update pubspec.yaml based on $ flutter pub outdated'
+          commit-message: 'update pubspec.yaml based on `$ flutter pub outdated`'
           branch: flutter-pub-outdated
           base: main
           delete-branch: true
           title: 'Update Pubspec.yaml'
-          body: 'update pubspec.yaml based on $ flutter pub outdated'
+          body: 'update pubspec.yaml based on `$ flutter pub outdated`'
           labels: 'dependencies'
 
