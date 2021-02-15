@@ -1,21 +1,37 @@
 import YAML from 'yaml'
-import {Packages} from './interfaces'
+import {Packages, PackageVersionInfo} from './interfaces'
 import {Pubspec, readYaml, writeYaml} from './yamlService'
 
-const pathToPubspec = './pubspec.yaml'
-
-export function readPubspec(): YAML.Document.Parsed {
+export function readPubspec(pathToPubspec: string): YAML.Document.Parsed {
   return readYaml(pathToPubspec)
 }
 
-export function writePubspec(pubspec: Pubspec): void {
+export function writePubspec(pubspec: Pubspec, pathToPubspec: string): void {
   writeYaml(pubspec, pathToPubspec)
 }
 
-export function updatePackages(
+export function updateOnePackageInPubspec(
+  pathToPubspecFile: string,
+  pubspec: Pubspec,
+  packageInfo: PackageVersionInfo,
+  isDevDependencies = false
+): void {
+  const updatedPubspec = updatePackageToResolvableVersion(
+    pubspec,
+    packageInfo.packageName,
+    packageInfo.resolvableVersion as string,
+    isDevDependencies
+  )
+
+  writePubspec(updatedPubspec, pathToPubspecFile)
+}
+
+export function updateAllPackagesInPubspec(
+  pathToPubspecFile: string,
   pubspec: Pubspec,
   outdatedPackages: Packages
-): Pubspec {
+): void {
+  // create a copy of the current pubspec
   let updatedPubspec = pubspec
 
   // update dependencies
@@ -37,7 +53,8 @@ export function updatePackages(
     )
   }
 
-  return updatedPubspec
+  // write the changes to pubspec.yaml
+  writePubspec(updatedPubspec, pathToPubspecFile)
 }
 
 export function updatePackageToResolvableVersion(
