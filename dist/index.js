@@ -56,10 +56,11 @@ function run() {
             }
             else {
                 // combine all packages' updates into one PR
-                // update pubspec
-                const updatedPubspec = pubspecService_1.updatePackages(pubspec, outdatedPackages);
-                // write to pubspec.yaml
-                pubspecService_1.writePubspec(updatedPubspec, pathToPubspecFile);
+                pubspecService_1.updatePubspecForAllPackages(pubspec, outdatedPackages, pathToPubspecFile);
+                // // update pubspec
+                // const updatedPubspec = updatePackages(pubspec, outdatedPackages)
+                // // write to pubspec.yaml
+                // writePubspec(updatedPubspec, pathToPubspecFile)
                 // eslint-disable-next-line no-console
                 console.log(pubspecService_1.readPubspec(pathToPubspecFile).toString());
             }
@@ -203,7 +204,7 @@ exports.splitAndRemoveEmptyString = splitAndRemoveEmptyString;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.updatePackageToResolvableVersion = exports.updatePackages = exports.writePubspec = exports.readPubspec = void 0;
+exports.updatePackageToResolvableVersion = exports.updatePackages = exports.updatePubspecForAllPackages = exports.writePubspec = exports.readPubspec = void 0;
 const yamlService_1 = __webpack_require__(9093);
 function readPubspec(pathToPubspec) {
     return yamlService_1.readYaml(pathToPubspec);
@@ -213,6 +214,21 @@ function writePubspec(pubspec, pathToPubspec) {
     yamlService_1.writeYaml(pubspec, pathToPubspec);
 }
 exports.writePubspec = writePubspec;
+function updatePubspecForAllPackages(pubspec, outdatedPackages, pathToPubspecFile) {
+    // create a copy of the current pubspec
+    let updatedPubspec = pubspec;
+    // update dependencies
+    for (const packageInfo of outdatedPackages.dependencies) {
+        updatedPubspec = updatePackageToResolvableVersion(updatedPubspec, packageInfo.packageName, packageInfo.resolvableVersion);
+    }
+    // update dev_dependencies
+    for (const packageInfo of outdatedPackages.devDependencies) {
+        updatedPubspec = updatePackageToResolvableVersion(updatedPubspec, packageInfo.packageName, packageInfo.resolvableVersion, true);
+    }
+    // write the changes to pubspec.yaml
+    writePubspec(updatedPubspec, pathToPubspecFile);
+}
+exports.updatePubspecForAllPackages = updatePubspecForAllPackages;
 function updatePackages(pubspec, outdatedPackages) {
     let updatedPubspec = pubspec;
     // update dependencies
