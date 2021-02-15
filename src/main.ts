@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import {getOutdatedPackages} from './outdated'
-import {readPubspec, updatePubspecForAllPackages} from './pubspecService'
+import {readPubspec, updateAllPackages} from './pubspecService'
 
 async function run(): Promise<void> {
   const pathToPubspecFile = core.getInput('pathToPubspecFile')
@@ -20,12 +20,7 @@ async function run(): Promise<void> {
       console.log('preferToSplitPrs')
     } else {
       // combine all packages' updates into one PR
-      updatePubspecForAllPackages(pubspec, outdatedPackages, pathToPubspecFile)
-      // // update pubspec
-      // const updatedPubspec = updatePackages(pubspec, outdatedPackages)
-
-      // // write to pubspec.yaml
-      // writePubspec(updatedPubspec, pathToPubspecFile)
+      updateAllPackages(pubspec, outdatedPackages, pathToPubspecFile)
 
       // eslint-disable-next-line no-console
       console.log(readPubspec(pathToPubspecFile).toString())
