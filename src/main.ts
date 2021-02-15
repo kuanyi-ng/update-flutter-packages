@@ -1,6 +1,11 @@
+/* eslint-disable no-console */
 import * as core from '@actions/core'
 import {getOutdatedPackages} from './outdated'
-import {readPubspec, updateAllPackages} from './pubspecService'
+import {
+  readPubspec,
+  updateAllPackagesInPubspec,
+  updateOnePackageInPubspec
+} from './pubspecService'
 
 async function run(): Promise<void> {
   const pathToPubspecFile = core.getInput('pathToPubspecFile')
@@ -16,13 +21,22 @@ async function run(): Promise<void> {
 
     if (preferToSplitPrs) {
       // update and open a new PR for each package
-      // eslint-disable-next-line no-console
-      console.log('preferToSplitPrs')
+      // update dependencies
+      for (const packageInfo of outdatedPackages.dependencies) {
+        console.log(packageInfo)
+        updateOnePackageInPubspec(pubspec, packageInfo, pathToPubspecFile)
+        console.log(readPubspec(pathToPubspecFile).toString())
+      }
+
+      // update dev_dependencies
+      for (const packageInfo of outdatedPackages.devDependencies) {
+        console.log(packageInfo)
+        updateOnePackageInPubspec(pubspec, packageInfo, pathToPubspecFile)
+        console.log(readPubspec(pathToPubspecFile).toString())
+      }
     } else {
       // combine all packages' updates into one PR
-      updateAllPackages(pubspec, outdatedPackages, pathToPubspecFile)
-
-      // eslint-disable-next-line no-console
+      updateAllPackagesInPubspec(pubspec, outdatedPackages, pathToPubspecFile)
       console.log(readPubspec(pathToPubspecFile).toString())
     }
   } catch (error) {
