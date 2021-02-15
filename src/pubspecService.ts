@@ -11,23 +11,25 @@ export function writePubspec(pubspec: Pubspec, pathToPubspec: string): void {
 }
 
 export function updateOnePackageInPubspec(
+  pathToPubspecFile: string,
   pubspec: Pubspec,
   packageInfo: PackageVersionInfo,
-  pathToPubspecFile: string
+  isDevDependencies = false
 ): void {
   const updatedPubspec = updatePackageToResolvableVersion(
     pubspec,
     packageInfo.packageName,
-    packageInfo.resolvableVersion as string
+    packageInfo.resolvableVersion as string,
+    isDevDependencies
   )
 
   writePubspec(updatedPubspec, pathToPubspecFile)
 }
 
 export function updateAllPackagesInPubspec(
+  pathToPubspecFile: string,
   pubspec: Pubspec,
-  outdatedPackages: Packages,
-  pathToPubspecFile: string
+  outdatedPackages: Packages
 ): void {
   // create a copy of the current pubspec
   let updatedPubspec = pubspec

@@ -55,19 +55,19 @@ function run() {
                 // update dependencies
                 for (const packageInfo of outdatedPackages.dependencies) {
                     console.log(packageInfo);
-                    pubspecService_1.updateOnePackageInPubspec(pubspec, packageInfo, pathToPubspecFile);
+                    pubspecService_1.updateOnePackageInPubspec(pathToPubspecFile, pubspec, packageInfo);
                     console.log(pubspecService_1.readPubspec(pathToPubspecFile).toString());
                 }
                 // update dev_dependencies
                 for (const packageInfo of outdatedPackages.devDependencies) {
                     console.log(packageInfo);
-                    pubspecService_1.updateOnePackageInPubspec(pubspec, packageInfo, pathToPubspecFile);
+                    pubspecService_1.updateOnePackageInPubspec(pathToPubspecFile, pubspec, packageInfo, true);
                     console.log(pubspecService_1.readPubspec(pathToPubspecFile).toString());
                 }
             }
             else {
                 // combine all packages' updates into one PR
-                pubspecService_1.updateAllPackagesInPubspec(pubspec, outdatedPackages, pathToPubspecFile);
+                pubspecService_1.updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages);
                 console.log(pubspecService_1.readPubspec(pathToPubspecFile).toString());
             }
         }
@@ -220,12 +220,12 @@ function writePubspec(pubspec, pathToPubspec) {
     yamlService_1.writeYaml(pubspec, pathToPubspec);
 }
 exports.writePubspec = writePubspec;
-function updateOnePackageInPubspec(pubspec, packageInfo, pathToPubspecFile) {
-    const updatedPubspec = updatePackageToResolvableVersion(pubspec, packageInfo.packageName, packageInfo.resolvableVersion);
+function updateOnePackageInPubspec(pathToPubspecFile, pubspec, packageInfo, isDevDependencies = false) {
+    const updatedPubspec = updatePackageToResolvableVersion(pubspec, packageInfo.packageName, packageInfo.resolvableVersion, isDevDependencies);
     writePubspec(updatedPubspec, pathToPubspecFile);
 }
 exports.updateOnePackageInPubspec = updateOnePackageInPubspec;
-function updateAllPackagesInPubspec(pubspec, outdatedPackages, pathToPubspecFile) {
+function updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages) {
     // create a copy of the current pubspec
     let updatedPubspec = pubspec;
     // update dependencies

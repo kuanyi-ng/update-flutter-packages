@@ -24,19 +24,19 @@ async function run(): Promise<void> {
       // update dependencies
       for (const packageInfo of outdatedPackages.dependencies) {
         console.log(packageInfo)
-        updateOnePackageInPubspec(pubspec, packageInfo, pathToPubspecFile)
+        updateOnePackageInPubspec(pathToPubspecFile, pubspec, packageInfo)
         console.log(readPubspec(pathToPubspecFile).toString())
       }
 
       // update dev_dependencies
       for (const packageInfo of outdatedPackages.devDependencies) {
         console.log(packageInfo)
-        updateOnePackageInPubspec(pubspec, packageInfo, pathToPubspecFile)
+        updateOnePackageInPubspec(pathToPubspecFile, pubspec, packageInfo, true)
         console.log(readPubspec(pathToPubspecFile).toString())
       }
     } else {
       // combine all packages' updates into one PR
-      updateAllPackagesInPubspec(pubspec, outdatedPackages, pathToPubspecFile)
+      updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages)
       console.log(readPubspec(pathToPubspecFile).toString())
     }
   } catch (error) {
