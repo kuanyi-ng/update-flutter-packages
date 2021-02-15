@@ -23,7 +23,7 @@ export function updateAllPackagesInPubspec(
     updatedPubspec = updatePackageToResolvableVersion(
       updatedPubspec,
       packageInfo.packageName,
-      packageInfo.resolvableVersion as string
+      packageInfo.resolvableVersion
     )
   }
 
@@ -32,7 +32,7 @@ export function updateAllPackagesInPubspec(
     updatedPubspec = updatePackageToResolvableVersion(
       updatedPubspec,
       packageInfo.packageName,
-      packageInfo.resolvableVersion as string,
+      packageInfo.resolvableVersion,
       true
     )
   }

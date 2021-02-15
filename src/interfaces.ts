@@ -1,8 +1,8 @@
 export interface PackageVersionInfo {
   packageName: string
   currentVersion: string
-  upgradableVersion?: string
-  resolvableVersion?: string
+  upgradableVersion: string
+  resolvableVersion: string
   latestVersion?: string
 }
 
