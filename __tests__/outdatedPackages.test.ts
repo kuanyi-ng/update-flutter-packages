@@ -39,7 +39,7 @@ describe('parseIntoPackageVersionInfo', () => {
   })
 })
 
-describe('parseIntoDependencySection', () => {
+describe('parseIntoArrayOfPackageVersionInfo', () => {
   it('convert an array of string (without the first element) into DependencySection', () => {
     const arrayOfString = [
       'Phasellus vel mauris nec massa',
