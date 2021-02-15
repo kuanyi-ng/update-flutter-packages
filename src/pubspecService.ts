@@ -1,5 +1,5 @@
 import YAML from 'yaml'
-import {Packages, PackageVersionInfo} from './interfaces'
+import {Packages} from './interfaces'
 import {Pubspec, readYaml, writeYaml} from './yamlService'
 
 export function readPubspec(pathToPubspec: string): YAML.Document.Parsed {
@@ -8,22 +8,6 @@ export function readPubspec(pathToPubspec: string): YAML.Document.Parsed {
 
 export function writePubspec(pubspec: Pubspec, pathToPubspec: string): void {
   writeYaml(pubspec, pathToPubspec)
-}
-
-export function updateOnePackageInPubspec(
-  pathToPubspecFile: string,
-  pubspec: Pubspec,
-  packageInfo: PackageVersionInfo,
-  isDevDependencies = false
-): void {
-  const updatedPubspec = updatePackageToResolvableVersion(
-    pubspec,
-    packageInfo.packageName,
-    packageInfo.resolvableVersion as string,
-    isDevDependencies
-  )
-
-  writePubspec(updatedPubspec, pathToPubspecFile)
 }
 
 export function updateAllPackagesInPubspec(

@@ -192,7 +192,7 @@ exports.splitAndRemoveEmptyString = splitAndRemoveEmptyString;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.updatePackageToResolvableVersion = exports.updateAllPackagesInPubspec = exports.updateOnePackageInPubspec = exports.writePubspec = exports.readPubspec = void 0;
+exports.updatePackageToResolvableVersion = exports.updateAllPackagesInPubspec = exports.writePubspec = exports.readPubspec = void 0;
 const yamlService_1 = __webpack_require__(9093);
 function readPubspec(pathToPubspec) {
     return yamlService_1.readYaml(pathToPubspec);
@@ -202,11 +202,6 @@ function writePubspec(pubspec, pathToPubspec) {
     yamlService_1.writeYaml(pubspec, pathToPubspec);
 }
 exports.writePubspec = writePubspec;
-function updateOnePackageInPubspec(pathToPubspecFile, pubspec, packageInfo, isDevDependencies = false) {
-    const updatedPubspec = updatePackageToResolvableVersion(pubspec, packageInfo.packageName, packageInfo.resolvableVersion, isDevDependencies);
-    writePubspec(updatedPubspec, pathToPubspecFile);
-}
-exports.updateOnePackageInPubspec = updateOnePackageInPubspec;
 function updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages) {
     // create a copy of the current pubspec
     let updatedPubspec = pubspec;
