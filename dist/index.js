@@ -50,6 +50,7 @@ function run() {
             const pubspec = pubspecService_1.readPubspec(pathToPubspecFile);
             // get outdated package
             const outdatedPackages = yield outdated_1.getOutdatedPackages();
+            console.log(outdatedPackages);
             if (preferToSplitPrs) {
                 // update and open a new PR for each package
                 // update dependencies

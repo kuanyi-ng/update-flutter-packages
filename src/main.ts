@@ -18,6 +18,7 @@ async function run(): Promise<void> {
 
     // get outdated package
     const outdatedPackages = await getOutdatedPackages()
+    console.log(outdatedPackages)
 
     if (preferToSplitPrs) {
       // update and open a new PR for each package
