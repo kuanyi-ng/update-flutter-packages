@@ -43,34 +43,15 @@ const pubspecService_1 = __webpack_require__(4525);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const pathToPubspecFile = core.getInput('pathToPubspecFile');
-        // change preferToSplitPrs (input) from string to boolean type
-        const preferToSplitPrs = core.getInput('preferToSplitPrs') === 'true';
         try {
             // read pubspec.yaml
             const pubspec = pubspecService_1.readPubspec(pathToPubspecFile);
             // get outdated package
             const outdatedPackages = yield outdated_1.getOutdatedPackages();
             console.log(outdatedPackages);
-            if (preferToSplitPrs) {
-                // update and open a new PR for each package
-                // update dependencies
-                for (const packageInfo of outdatedPackages.dependencies) {
-                    console.log(packageInfo);
-                    pubspecService_1.updateOnePackageInPubspec(pathToPubspecFile, pubspec, packageInfo);
-                    console.log(pubspecService_1.readPubspec(pathToPubspecFile).toString());
-                }
-                // update dev_dependencies
-                for (const packageInfo of outdatedPackages.devDependencies) {
-                    console.log(packageInfo);
-                    pubspecService_1.updateOnePackageInPubspec(pathToPubspecFile, pubspec, packageInfo, true);
-                    console.log(pubspecService_1.readPubspec(pathToPubspecFile).toString());
-                }
-            }
-            else {
-                // combine all packages' updates into one PR
-                pubspecService_1.updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages);
-                console.log(pubspecService_1.readPubspec(pathToPubspecFile).toString());
-            }
+            // combine all packages' updates into one PR
+            pubspecService_1.updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages);
+            console.log(pubspecService_1.readPubspec(pathToPubspecFile).toString());
         }
         catch (error) {
             core.setFailed(error.message);
@@ -211,7 +192,7 @@ exports.splitAndRemoveEmptyString = splitAndRemoveEmptyString;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.updatePackageToResolvableVersion = exports.updateAllPackagesInPubspec = exports.updateOnePackageInPubspec = exports.writePubspec = exports.readPubspec = void 0;
+exports.updatePackageToResolvableVersion = exports.updateAllPackagesInPubspec = exports.writePubspec = exports.readPubspec = void 0;
 const yamlService_1 = __webpack_require__(9093);
 function readPubspec(pathToPubspec) {
     return yamlService_1.readYaml(pathToPubspec);
@@ -221,11 +202,6 @@ function writePubspec(pubspec, pathToPubspec) {
     yamlService_1.writeYaml(pubspec, pathToPubspec);
 }
 exports.writePubspec = writePubspec;
-function updateOnePackageInPubspec(pathToPubspecFile, pubspec, packageInfo, isDevDependencies = false) {
-    const updatedPubspec = updatePackageToResolvableVersion(pubspec, packageInfo.packageName, packageInfo.resolvableVersion, isDevDependencies);
-    writePubspec(updatedPubspec, pathToPubspecFile);
-}
-exports.updateOnePackageInPubspec = updateOnePackageInPubspec;
 function updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages) {
     // create a copy of the current pubspec
     let updatedPubspec = pubspec;

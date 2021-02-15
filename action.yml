@@ -6,10 +6,6 @@ inputs:
     required: true
     description: 'relative path to pubspec.yaml file from root directory'
     default: './pubspec.yaml'
-  preferToSplitPrs:
-    required: true
-    description: 'split updates of each packages into respective pull requests when value is true'
-    default: 'true'
 runs:
   using: 'node12'
   main: 'dist/index.js'
