@@ -44,4 +44,3 @@ jobs:
           title: 'Update Pubspec.yaml'
           body: 'update pubspec.yaml based on `$ flutter pub outdated`'
           labels: 'dependencies'
-
