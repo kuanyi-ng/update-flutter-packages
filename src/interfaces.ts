@@ -12,3 +12,8 @@ export interface Packages {
   transitiveDependencies?: PackageVersionInfo[]
   transitiveDevDependencies?: PackageVersionInfo[]
 }
+
+export interface CliOutputs {
+  output: string
+  error: string
+}
