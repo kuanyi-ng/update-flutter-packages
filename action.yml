@@ -6,6 +6,9 @@ inputs:
     required: true
     description: 'relative path to pubspec.yaml file from root directory'
     default: './pubspec.yaml'
+outputs:
+  pullRequestRequired:
+    description: 'a boolean value deciding if a new pull request should be made or not (using another GitHub Action)'
 runs:
   using: 'node12'
   main: 'dist/index.js'

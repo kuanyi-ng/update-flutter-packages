@@ -109,12 +109,22 @@ function run() {
             const pubspec = pubspecService_1.readPubspec(pathToPubspecFile);
             core.info('Get info about outdated packages.');
             const outdatedPackages = yield outdatedPackages_1.getOutdatedPackages();
+            core.info('Check if any updates is required.');
+            const updatesRequired = outdatedPackages_1.checkIfUpdatesRequired(outdatedPackages);
             // eslint-disable-next-line no-console
             console.log(outdatedPackages);
-            core.info('Update content of pubspec.yaml.');
-            pubspecService_1.updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages);
-            core.info('Get packages written in pubspec.yaml (with updated versions).');
-            yield flutterCli_1.runFlutterPubGet();
+            if (updatesRequired) {
+                core.info('Update content of pubspec.yaml.');
+                pubspecService_1.updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages);
+                core.info('Get packages written in pubspec.yaml (with updated versions).');
+                yield flutterCli_1.runFlutterPubGet();
+            }
+            else {
+                core.info('All packages are up to date.');
+            }
+            // pullRequestRequired output will be used in workflow file
+            // to decide if a new pull request should be made or not
+            core.setOutput('pullRequestRequired', updatesRequired);
         }
         catch (error) {
             core.setFailed(error.message);
@@ -141,7 +151,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.splitAndRemoveEmptyString = exports.parseIntoPackageVersionInfo = exports.parseIntoArrayOfPackageVersionInfo = exports.splitIntoDependencySections = exports.parseIntoOutdatedPackages = exports.getOutdatedPackages = void 0;
+exports.splitAndRemoveEmptyString = exports.checkIfUpdatesRequired = exports.parseIntoPackageVersionInfo = exports.parseIntoArrayOfPackageVersionInfo = exports.splitIntoDependencySections = exports.parseIntoOutdatedPackages = exports.getOutdatedPackages = void 0;
 const flutterCli_1 = __webpack_require__(5383);
 function getOutdatedPackages() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -226,6 +236,12 @@ function parseIntoPackageVersionInfo(dependency) {
     };
 }
 exports.parseIntoPackageVersionInfo = parseIntoPackageVersionInfo;
+function checkIfUpdatesRequired(outdatedPackages) {
+    const dependenciesUpdateRequired = outdatedPackages.dependencies.length > 0;
+    const devDependenciesUpdatesRequired = outdatedPackages.devDependencies.length > 0;
+    return dependenciesUpdateRequired || devDependenciesUpdatesRequired;
+}
+exports.checkIfUpdatesRequired = checkIfUpdatesRequired;
 function refineVersionText(versionText) {
     return versionText.replace('*', '');
 }

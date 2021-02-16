@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import {runFlutterPubGet} from './flutterCli'
-import {getOutdatedPackages} from './outdatedPackages'
+import {checkIfUpdatesRequired, getOutdatedPackages} from './outdatedPackages'
 import {readPubspec, updateAllPackagesInPubspec} from './pubspecService'
 
 async function run(): Promise<void> {
@@ -16,14 +16,25 @@ async function run(): Promise<void> {
     core.info('Get info about outdated packages.')
     const outdatedPackages = await getOutdatedPackages()
 
+    core.info('Check if any updates is required.')
+    const updatesRequired = checkIfUpdatesRequired(outdatedPackages)
+
     // eslint-disable-next-line no-console
     console.log(outdatedPackages)
 
-    core.info('Update content of pubspec.yaml.')
-    updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages)
+    if (updatesRequired) {
+      core.info('Update content of pubspec.yaml.')
+      updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages)
 
-    core.info('Get packages written in pubspec.yaml (with updated versions).')
-    await runFlutterPubGet()
+      core.info('Get packages written in pubspec.yaml (with updated versions).')
+      await runFlutterPubGet()
+    } else {
+      core.info('All packages are up to date.')
+    }
+
+    // pullRequestRequired output will be used in workflow file
+    // to decide if a new pull request should be made or not
+    core.setOutput('pullRequestRequired', updatesRequired)
   } catch (error) {
     core.setFailed(error.message)
   }
