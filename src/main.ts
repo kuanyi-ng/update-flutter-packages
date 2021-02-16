@@ -16,6 +16,9 @@ async function run(): Promise<void> {
     core.info('Get info about outdated packages.')
     const outdatedPackages = await getOutdatedPackages()
 
+    // eslint-disable-next-line no-console
+    console.log(outdatedPackages)
+
     core.info('Update content of pubspec.yaml.')
     updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages)
 
