@@ -2,7 +2,7 @@
   <a href="https://github.com/actions/typescript-action/actions"><img alt="typescript-action status" src="https://github.com/actions/typescript-action/workflows/build-test/badge.svg"></a>
 </p>
 
-# Update Flutter Packages (GitHub Action)
+# Flutter Pubspec Updater
 
 ## Background
 [Dependabot](https://dependabot.com/) is a great tool to keep dependencies up-to-date, but the package manager, `pub` is not supported. 
