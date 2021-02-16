@@ -1,4 +1,4 @@
-name: 'Update Flutter Packages'
+name: 'Flutter Pubspec Updater'
 description: 'Update pubspec.yaml based on results from $ flutter pub outdated'
 author: 'Kuan Yi Ng'
 inputs:
