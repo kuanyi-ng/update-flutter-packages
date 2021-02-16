@@ -80,7 +80,7 @@ jobs:
         with: # refer to https://github.com/peter-evans/create-pull-request for customization of inputs
           commit-message: 'update pubspec.yaml based on `$ flutter pub outdated`'
           branch: flutter-pub-outdated
-          base: main
+          base: main # sets the pull request base branch here
           delete-branch: true
           title: 'Update Pubspec.yaml'
           body: 'update pubspec.yaml based on `$ flutter pub outdated`'
