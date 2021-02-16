@@ -47,7 +47,11 @@ Currently, there's only one input and it's **optional**.
 | `pathToPubspecFile` | relative path to `pubspec.yaml` file from the repository's root directory. | `./pubspec.yaml` |
 
 ### Action outputs
-This action doesn't have any outputs
+There's only one output from this action.
+
+| Output Name | Description | Type |
+| --- | --- | --- |
+| `pullRequestRequired` | a boolean value deciding if a new pull request should be made or not (using another GitHub Action). | `boolean` |
 
 ## Example
 
