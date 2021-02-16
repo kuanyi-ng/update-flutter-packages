@@ -1,4 +1,4 @@
-name: 'Update Flutter Packages'
+name: 'Flutter Pubspec Updater'
 description: 'Update pubspec.yaml based on results from $ flutter pub outdated'
 author: 'Kuan Yi Ng'
 inputs:
@@ -12,3 +12,6 @@ outputs:
 runs:
   using: 'node12'
   main: 'dist/index.js'
+branding:
+  icon: 'package'
+  color: 'blue'
