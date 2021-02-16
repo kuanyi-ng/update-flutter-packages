@@ -1,22 +1,24 @@
-import {exec, ExecOptions} from '@actions/exec'
+import {runFlutterPubOutdated} from './flutterCli'
 import {Packages, PackageVersionInfo} from './interfaces'
 
 export async function getOutdatedPackages(): Promise<Packages> {
-  let output = ''
-  let error = ''
+  const {output, error} = await runFlutterPubOutdated()
 
-  const options: ExecOptions = {}
-  options.silent = true
-  options.listeners = {
-    stdout: (data: Buffer) => {
-      output += data.toString()
-    },
-    stderr: (data: Buffer) => {
-      error += data.toString()
-    }
-  }
+  // let output = ''
+  // let error = ''
 
-  await exec('flutter', ['pub', 'outdated'], options)
+  // const options: ExecOptions = {}
+  // options.silent = true
+  // options.listeners = {
+  //   stdout: (data: Buffer) => {
+  //     output += data.toString()
+  //   },
+  //   stderr: (data: Buffer) => {
+  //     error += data.toString()
+  //   }
+  // }
+
+  // await exec('flutter', ['pub', 'outdated'], options)
 
   if (error.length > 0) {
     throw Error(`

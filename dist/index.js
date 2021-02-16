@@ -2,6 +2,49 @@ require('./sourcemap-register.js');module.exports =
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 5383:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.runFlutterPubOutdated = void 0;
+const exec_1 = __webpack_require__(1514);
+function runFlutterPubOutdated() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let output = '';
+        let error = '';
+        const options = {};
+        options.silent = true;
+        options.listeners = {
+            stdout: (data) => {
+                output += data.toString();
+            },
+            stderr: (data) => {
+                error += data.toString();
+            }
+        };
+        yield exec_1.exec('flutter', ['pub', 'outdated'], options);
+        return {
+            output,
+            error
+        };
+    });
+}
+exports.runFlutterPubOutdated = runFlutterPubOutdated;
+
+
+/***/ }),
+
 /***/ 3109:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -76,22 +119,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.splitAndRemoveEmptyString = exports.parseIntoPackageVersionInfo = exports.parseIntoArrayOfPackageVersionInfo = exports.splitIntoDependencySections = exports.parseIntoOutdatedPackages = exports.getOutdatedPackages = void 0;
-const exec_1 = __webpack_require__(1514);
+const flutterCli_1 = __webpack_require__(5383);
 function getOutdatedPackages() {
     return __awaiter(this, void 0, void 0, function* () {
-        let output = '';
-        let error = '';
-        const options = {};
-        options.silent = true;
-        options.listeners = {
-            stdout: (data) => {
-                output += data.toString();
-            },
-            stderr: (data) => {
-                error += data.toString();
-            }
-        };
-        yield exec_1.exec('flutter', ['pub', 'outdated'], options);
+        const { output, error } = yield flutterCli_1.runFlutterPubOutdated();
+        // let output = ''
+        // let error = ''
+        // const options: ExecOptions = {}
+        // options.silent = true
+        // options.listeners = {
+        //   stdout: (data: Buffer) => {
+        //     output += data.toString()
+        //   },
+        //   stderr: (data: Buffer) => {
+        //     error += data.toString()
+        //   }
+        // }
+        // await exec('flutter', ['pub', 'outdated'], options)
         if (error.length > 0) {
             throw Error(`
     an error occured during the execution of flutter pub outdated.
