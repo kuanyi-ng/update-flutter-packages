@@ -2,73 +2,88 @@
   <a href="https://github.com/actions/typescript-action/actions"><img alt="typescript-action status" src="https://github.com/actions/typescript-action/workflows/build-test/badge.svg"></a>
 </p>
 
-# Create a JavaScript Action using TypeScript
+# Update Flutter Packages (GitHub Action)
 
-Use this template to bootstrap the creation of a TypeScript action.:rocket:
+## Background
+[Dependabot](https://dependabot.com/) is a great tool to keep dependencies up-to-date, but currently the package manager, `pub` is not supported. 
+According to their [Contributions Guide](https://github.com/dependabot/dependabot-core/blob/main/CONTRIBUTING.md#why-have-we-paused-accepting-new-ecosystems), they won't be adding support to new package manager until at least June 2021.
 
-This template includes compilation support, tests, a validation workflow, publishing, and versioning guidance.  
+After googling for awhile, I found [Flutter Package Updater](https://github.com/tianhaoz95/update-flutter-packages), a GitHub Action which opens a pull request to update all the packages defined in `pubspec.yaml`.
+[Flutter Package Updater](https://github.com/tianhaoz95/update-flutter-packages) does it using the command `$ flutter pub upgrade` and updates the `pubspec.lock` in a Flutter repository.
 
-If you are new, there's also a simpler introduction.  See the [Hello World JavaScript Action](https://github.com/actions/hello-world-javascript-action)
+However, I did not use the GitHub Action mentioned above.
+Personally, I prefer dependencies updates to be performed on `pubspec.yaml` instead of `pubspec.lock` as `pubspec.yaml` is easier to read and `pubspec.lock` when I want to check the packages' versions I'm using.
 
-## Create an action from this template
+## Solution
+Instead of upgrading `pubspec.lock` with the command `$ flutter pub upgrade`, this action will update `pubspec.yaml` based on the outputs from the command `$ flutter pub outdated`.
+After `pubspec.yaml` is updated, this action will run `$ flutter pub get` to update `pubspec.lock` based on the updated `pubspec.yaml`.
 
-Click the `Use this Template` and provide the new repo details for your action
+Documentations for each commands (direct to Dart Documentation)
+- [`pub upgrade`](https://dart.dev/tools/pub/cmd/pub-upgrade)
+- [`pub outdated`](https://dart.dev/tools/pub/cmd/pub-outdated)
 
-## Code in Main
+This actions requires:
+- [`actions/checkout@v2`]()
+  - allow GitHub Action to access codes this repository
+- [`actions/setup-java@v1`]()
+  - setup Java environment (required by `flutter-action@v1`) on GitHub Action virtual machine
+- [`subosito/flutter-action@v1`]()
+  - setup Flutter environment on GitHub Action virtual machine
+  - enable usage of Flutter cli-commands
+- [`peter-evans/create-pull-request@v3`]()
+  - create a pull request to apply updates on `pubspec.yaml`
 
-> First, you'll need to have a reasonably modern version of `node` handy. This won't work with versions older than 9, for instance.
-
-Install the dependencies  
-```bash
-$ npm install
+## Usage
+```yaml
+- name: Update Flutter Packages
+  uses: # TODO: write here after publishing to GitHub Marketplace
 ```
 
-Build the typescript and package it for distribution
-```bash
-$ npm run build && npm run package
+### Action inputs
+Currently, there's only one input and it's **optional**.
+
+| Input Name | Description | Default Value |
+| --- | --- | --- |
+| `pathToPubspecFile` | relative path to `pubspec.yaml` file from the repository's root directory. | `./pubspec.yaml` |
+
+### Action outputs
+This action doesn't have any outputs
+
+## Example
+
+```yaml
+jobs:
+  updateDependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Java environment
+        uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+
+      - name: Set up Flutter environment
+        uses: subosito/flutter-action@v1
+        with:
+          channel: 'stable' # or: 'beta' or 'dev'
+    
+      - name: Update Flutter Packages
+        uses: # TODO: write here after publishing to GitHub Marketplace
+
+      - name: Create Pull Request to Apply Dependencies Updates
+        uses: peter-evans/create-pull-request@v3
+        with: # refer to https://github.com/peter-evans/create-pull-request for customization of inputs
+          commit-message: 'update pubspec.yaml based on `$ flutter pub outdated`'
+          branch: flutter-pub-outdated
+          base: main
+          delete-branch: true
+          title: 'Update Pubspec.yaml'
+          body: 'update pubspec.yaml based on `$ flutter pub outdated`'
+          labels: 'dependencies'
 ```
 
-Run the tests :heavy_check_mark:  
-```bash
-$ npm test
-
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
-
-...
-```
-
-## Change action.yml
-
-The action.yml contains defines the inputs and output for your action.
-
-Update the action.yml with your name, description, inputs and outputs for your action.
-
-See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-github-actions)
-
-## Change the Code
-
-Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
-
-```javascript
-import * as core from '@actions/core';
-...
-
-async function run() {
-  try { 
-      ...
-  } 
-  catch (error) {
-    core.setFailed(error.message);
-  }
-}
-
-run()
-```
-
-See the [toolkit documentation](https://github.com/actions/toolkit/blob/master/README.md#packages) for the various packages.
+---
 
 ## Publish to a distribution branch
 
