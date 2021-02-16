@@ -109,14 +109,22 @@ function run() {
             const pubspec = pubspecService_1.readPubspec(pathToPubspecFile);
             core.info('Get info about outdated packages.');
             const outdatedPackages = yield outdatedPackages_1.getOutdatedPackages();
-            // eslint-disable-next-line no-console
-            console.log(outdatedPackages_1.checkIfUpdatesRequired(outdatedPackages));
+            core.info('Check if any updates is required.');
+            const updatesRequired = outdatedPackages_1.checkIfUpdatesRequired(outdatedPackages);
             // eslint-disable-next-line no-console
             console.log(outdatedPackages);
-            core.info('Update content of pubspec.yaml.');
-            pubspecService_1.updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages);
-            core.info('Get packages written in pubspec.yaml (with updated versions).');
-            yield flutterCli_1.runFlutterPubGet();
+            if (updatesRequired) {
+                core.info('Update content of pubspec.yaml.');
+                pubspecService_1.updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages);
+                core.info('Get packages written in pubspec.yaml (with updated versions).');
+                yield flutterCli_1.runFlutterPubGet();
+            }
+            else {
+                core.info('All packages are up to date.');
+            }
+            // pullRequestRequired output will be used in workflow file
+            // to decide if a new pull request should be made or not
+            core.setOutput('pullRequestRequired', updatesRequired);
         }
         catch (error) {
             core.setFailed(error.message);
