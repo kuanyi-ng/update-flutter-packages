@@ -5,14 +5,14 @@
 # Update Flutter Packages (GitHub Action)
 
 ## Background
-[Dependabot](https://dependabot.com/) is a great tool to keep dependencies up-to-date, but currently the package manager, `pub` is not supported. 
+[Dependabot](https://dependabot.com/) is a great tool to keep dependencies up-to-date, but the package manager, `pub` is not supported. 
 According to their [Contributions Guide](https://github.com/dependabot/dependabot-core/blob/main/CONTRIBUTING.md#why-have-we-paused-accepting-new-ecosystems), they won't be adding support to new package manager until at least June 2021.
 
-After googling for awhile, I found [Flutter Package Updater](https://github.com/tianhaoz95/update-flutter-packages), a GitHub Action which opens a pull request to update all the packages defined in `pubspec.yaml`.
-[Flutter Package Updater](https://github.com/tianhaoz95/update-flutter-packages) does it using the command `$ flutter pub upgrade` and updates the `pubspec.lock` in a Flutter repository.
+After googling for a while, I found [Flutter Package Updater](https://github.com/tianhaoz95/update-flutter-packages), a GitHub Action which opens a pull request to update all the packages defined in `pubspec.yaml`.
+[Flutter Package Updater](https://github.com/tianhaoz95/update-flutter-packages) does via the command `$ flutter pub upgrade` and updates the `pubspec.lock` in a Flutter repository.
 
 However, I did not use the GitHub Action mentioned above.
-Personally, I prefer dependencies updates to be performed on `pubspec.yaml` instead of `pubspec.lock` as `pubspec.yaml` is easier to read and `pubspec.lock` when I want to check the packages' versions I'm using.
+I prefer updating dependencies in `pubspec.yaml` instead of `pubspec.lock` as `pubspec.yaml` is easier to read and `pubspec.lock` when I want to check the packages' versions I'm using.
 
 ## Solution
 Instead of upgrading `pubspec.lock` with the command `$ flutter pub upgrade`, this action will update `pubspec.yaml` based on the outputs from the command `$ flutter pub outdated`.
