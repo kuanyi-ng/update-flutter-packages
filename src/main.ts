@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import {runFlutterPubGet} from './flutterCli'
-import {getOutdatedPackages} from './outdatedPackages'
+import {checkIfUpdatesRequired, getOutdatedPackages} from './outdatedPackages'
 import {readPubspec, updateAllPackagesInPubspec} from './pubspecService'
 
 async function run(): Promise<void> {
@@ -15,6 +15,9 @@ async function run(): Promise<void> {
 
     core.info('Get info about outdated packages.')
     const outdatedPackages = await getOutdatedPackages()
+
+    // eslint-disable-next-line no-console
+    console.log(checkIfUpdatesRequired(outdatedPackages))
 
     // eslint-disable-next-line no-console
     console.log(outdatedPackages)

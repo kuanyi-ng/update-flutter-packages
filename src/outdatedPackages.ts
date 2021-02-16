@@ -100,6 +100,14 @@ export function parseIntoPackageVersionInfo(
   }
 }
 
+export function checkIfUpdatesRequired(outdatedPackages: Packages): boolean {
+  const dependenciesUpdateRequired = outdatedPackages.dependencies.length > 0
+  const devDependenciesUpdatesRequired =
+    outdatedPackages.devDependencies.length > 0
+
+  return dependenciesUpdateRequired || devDependenciesUpdatesRequired
+}
+
 function refineVersionText(versionText: string): string {
   return versionText.replace('*', '')
 }
