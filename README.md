@@ -36,7 +36,7 @@ This actions requires:
 ## Usage
 ```yaml
 - name: Update Flutter Packages
-  uses: # TODO: write here after publishing to GitHub Marketplace
+  uses: kuanyi-ng/update-flutter-packages@v0.1.0
 ```
 
 ### Action inputs
@@ -73,7 +73,7 @@ jobs:
           channel: 'stable' # or: 'beta' or 'dev'
     
       - name: Update Flutter Packages
-        uses: # TODO: write here after publishing to GitHub Marketplace
+        uses: kuanyi-ng/update-flutter-packages@v0.1.0
 
       - name: Create Pull Request to Apply Dependencies Updates
         uses: peter-evans/create-pull-request@v3
