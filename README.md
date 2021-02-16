@@ -23,14 +23,14 @@ Documentations for each commands (direct to Dart Documentation)
 - [`pub outdated`](https://dart.dev/tools/pub/cmd/pub-outdated)
 
 This actions requires:
-- [`actions/checkout@v2`]()
+- [`actions/checkout@v2`](https://github.com/actions/checkout)
   - allow GitHub Action to access codes this repository
-- [`actions/setup-java@v1`]()
+- [`actions/setup-java@v1`](https://github.com/actions/setup-java)
   - setup Java environment (required by `flutter-action@v1`) on GitHub Action virtual machine
-- [`subosito/flutter-action@v1`]()
+- [`subosito/flutter-action@v1`](https://github.com/subosito/flutter-action)
   - setup Flutter environment on GitHub Action virtual machine
   - enable usage of Flutter cli-commands
-- [`peter-evans/create-pull-request@v3`]()
+- [`peter-evans/create-pull-request@v3`](https://github.com/peter-evans/create-pull-request)
   - create a pull request to apply updates on `pubspec.yaml`
 
 ## Usage
