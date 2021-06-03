@@ -28,15 +28,3 @@ jobs:
       - name: Update pubspec.yaml
         id: updatePubspec
         uses: ./
-
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
-        if: ${{steps.updatePubspec.outputs.pullRequestRequired}}
-        with:
-          commit-message: 'update pubspec.yaml based on `$ flutter pub outdated`'
-          branch: flutter-pub-outdated
-          base: main
-          delete-branch: true
-          title: 'Update Pubspec.yaml'
-          body: 'update pubspec.yaml based on `$ flutter pub outdated`'
-          labels: 'dependencies'
