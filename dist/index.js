@@ -492,7 +492,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
+exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
 const command_1 = __nccwpck_require__(7351);
 const file_command_1 = __nccwpck_require__(717);
 const utils_1 = __nccwpck_require__(5278);
@@ -578,6 +578,21 @@ function getInput(name, options) {
     return val.trim();
 }
 exports.getInput = getInput;
+/**
+ * Gets the values of an multiline input.  Each value is also trimmed.
+ *
+ * @param     name     name of the input to get
+ * @param     options  optional. See InputOptions.
+ * @returns   string[]
+ *
+ */
+function getMultilineInput(name, options) {
+    const inputs = getInput(name, options)
+        .split('\n')
+        .filter(x => x !== '');
+    return inputs;
+}
+exports.getMultilineInput = getMultilineInput;
 /**
  * Gets the input value of the boolean type in the YAML 1.2 "core schema" specification.
  * Support boolean input list: `true | True | TRUE | false | False | FALSE` .
@@ -822,6 +837,25 @@ exports.toCommandValue = toCommandValue;
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -831,14 +865,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getExecOutput = exports.exec = void 0;
+const string_decoder_1 = __nccwpck_require__(4304);
 const tr = __importStar(__nccwpck_require__(8159));
 /**
  * Exec a command.
@@ -864,6 +893,51 @@ function exec(commandLine, args, options) {
     });
 }
 exports.exec = exec;
+/**
+ * Exec a command and get the output.
+ * Output will be streamed to the live console.
+ * Returns promise with the exit code and collected stdout and stderr
+ *
+ * @param     commandLine           command to execute (can include additional args). Must be correctly escaped.
+ * @param     args                  optional arguments for tool. Escaping is handled by the lib.
+ * @param     options               optional exec options.  See ExecOptions
+ * @returns   Promise<ExecOutput>   exit code, stdout, and stderr
+ */
+function getExecOutput(commandLine, args, options) {
+    var _a, _b;
+    return __awaiter(this, void 0, void 0, function* () {
+        let stdout = '';
+        let stderr = '';
+        //Using string decoder covers the case where a mult-byte character is split
+        const stdoutDecoder = new string_decoder_1.StringDecoder('utf8');
+        const stderrDecoder = new string_decoder_1.StringDecoder('utf8');
+        const originalStdoutListener = (_a = options === null || options === void 0 ? void 0 : options.listeners) === null || _a === void 0 ? void 0 : _a.stdout;
+        const originalStdErrListener = (_b = options === null || options === void 0 ? void 0 : options.listeners) === null || _b === void 0 ? void 0 : _b.stderr;
+        const stdErrListener = (data) => {
+            stderr += stderrDecoder.write(data);
+            if (originalStdErrListener) {
+                originalStdErrListener(data);
+            }
+        };
+        const stdOutListener = (data) => {
+            stdout += stdoutDecoder.write(data);
+            if (originalStdoutListener) {
+                originalStdoutListener(data);
+            }
+        };
+        const listeners = Object.assign(Object.assign({}, options === null || options === void 0 ? void 0 : options.listeners), { stdout: stdOutListener, stderr: stdErrListener });
+        const exitCode = yield exec(commandLine, args, Object.assign(Object.assign({}, options), { listeners }));
+        //flush any remaining characters
+        stdout += stdoutDecoder.end();
+        stderr += stderrDecoder.end();
+        return {
+            exitCode,
+            stdout,
+            stderr
+        };
+    });
+}
+exports.getExecOutput = getExecOutput;
 //# sourceMappingURL=exec.js.map
 
 /***/ }),
@@ -872,6 +946,25 @@ exports.exec = exec;
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -881,20 +974,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.argStringToArray = exports.ToolRunner = void 0;
 const os = __importStar(__nccwpck_require__(2087));
 const events = __importStar(__nccwpck_require__(8614));
 const child = __importStar(__nccwpck_require__(3129));
 const path = __importStar(__nccwpck_require__(5622));
 const io = __importStar(__nccwpck_require__(7436));
 const ioUtil = __importStar(__nccwpck_require__(1962));
+const timers_1 = __nccwpck_require__(8213);
 /* eslint-disable @typescript-eslint/unbound-method */
 const IS_WINDOWS = process.platform === 'win32';
 /*
@@ -964,11 +1052,12 @@ class ToolRunner extends events.EventEmitter {
                 s = s.substring(n + os.EOL.length);
                 n = s.indexOf(os.EOL);
             }
-            strBuffer = s;
+            return s;
         }
         catch (err) {
             // streaming lines to console is best effort.  Don't fail a build.
             this._debug(`error processing line. Failed with error ${err}`);
+            return '';
         }
     }
     _getSpawnFileName() {
@@ -1250,7 +1339,7 @@ class ToolRunner extends events.EventEmitter {
             // if the tool is only a file name, then resolve it from the PATH
             // otherwise verify it exists (add extension on Windows if necessary)
             this.toolPath = yield io.which(this.toolPath, true);
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 this._debug(`exec tool: ${this.toolPath}`);
                 this._debug('arguments:');
                 for (const arg of this.args) {
@@ -1264,9 +1353,12 @@ class ToolRunner extends events.EventEmitter {
                 state.on('debug', (message) => {
                     this._debug(message);
                 });
+                if (this.options.cwd && !(yield ioUtil.exists(this.options.cwd))) {
+                    return reject(new Error(`The cwd: ${this.options.cwd} does not exist!`));
+                }
                 const fileName = this._getSpawnFileName();
                 const cp = child.spawn(fileName, this._getSpawnArgs(optionsNonNull), this._getSpawnOptions(this.options, fileName));
-                const stdbuffer = '';
+                let stdbuffer = '';
                 if (cp.stdout) {
                     cp.stdout.on('data', (data) => {
                         if (this.options.listeners && this.options.listeners.stdout) {
@@ -1275,14 +1367,14 @@ class ToolRunner extends events.EventEmitter {
                         if (!optionsNonNull.silent && optionsNonNull.outStream) {
                             optionsNonNull.outStream.write(data);
                         }
-                        this._processLineBuffer(data, stdbuffer, (line) => {
+                        stdbuffer = this._processLineBuffer(data, stdbuffer, (line) => {
                             if (this.options.listeners && this.options.listeners.stdline) {
                                 this.options.listeners.stdline(line);
                             }
                         });
                     });
                 }
-                const errbuffer = '';
+                let errbuffer = '';
                 if (cp.stderr) {
                     cp.stderr.on('data', (data) => {
                         state.processStderr = true;
@@ -1297,7 +1389,7 @@ class ToolRunner extends events.EventEmitter {
                                 : optionsNonNull.outStream;
                             s.write(data);
                         }
-                        this._processLineBuffer(data, errbuffer, (line) => {
+                        errbuffer = this._processLineBuffer(data, errbuffer, (line) => {
                             if (this.options.listeners && this.options.listeners.errline) {
                                 this.options.listeners.errline(line);
                             }
@@ -1344,7 +1436,7 @@ class ToolRunner extends events.EventEmitter {
                     }
                     cp.stdin.end(this.options.input);
                 }
-            });
+            }));
         });
     }
 }
@@ -1430,7 +1522,7 @@ class ExecState extends events.EventEmitter {
             this._setResult();
         }
         else if (this.processExited) {
-            this.timeout = setTimeout(ExecState.HandleTimeout, this.delay, this);
+            this.timeout = timers_1.setTimeout(ExecState.HandleTimeout, this.delay, this);
         }
     }
     _debug(message) {
@@ -2087,8 +2179,8 @@ function composeDoc(options, directives, { offset, start, value, end }, onError)
         schema: doc.schema
     };
     const props = resolveProps.resolveProps(start, {
-        ctx,
         indicator: 'doc-start',
+        next: value || (end === null || end === void 0 ? void 0 : end[0]),
         offset,
         onError,
         startOnNewline: true
@@ -2312,7 +2404,7 @@ function parsePrelude(prelude) {
             case '#':
                 comment +=
                     (comment === '' ? '' : afterEmptyLine ? '\n\n' : '\n') +
-                        source.substring(1);
+                        (source.substring(1) || ' ');
                 atComment = true;
                 afterEmptyLine = false;
                 break;
@@ -2519,6 +2611,7 @@ var Pair = __nccwpck_require__(3497);
 var YAMLMap = __nccwpck_require__(6761);
 var resolveProps = __nccwpck_require__(9663);
 var utilContainsNewline = __nccwpck_require__(7801);
+var utilMapIncludes = __nccwpck_require__(379);
 
 const startColMsg = 'All mapping items must start at the same column';
 function resolveBlockMap({ composeNode, composeEmptyNode }, ctx, bm, onError) {
@@ -2528,8 +2621,8 @@ function resolveBlockMap({ composeNode, composeEmptyNode }, ctx, bm, onError) {
     for (const { start, key, sep, value } of bm.items) {
         // key properties
         const keyProps = resolveProps.resolveProps(start, {
-            ctx,
             indicator: 'explicit-key-ind',
+            next: key || (sep === null || sep === void 0 ? void 0 : sep[0]),
             offset,
             onError,
             startOnNewline: true
@@ -2563,10 +2656,12 @@ function resolveBlockMap({ composeNode, composeEmptyNode }, ctx, bm, onError) {
         const keyNode = key
             ? composeNode(ctx, key, keyProps, onError)
             : composeEmptyNode(ctx, keyStart, start, null, keyProps, onError);
+        if (utilMapIncludes.mapIncludes(ctx, map.items, keyNode))
+            onError(keyStart, 'DUPLICATE_KEY', 'Map keys must be unique');
         // value properties
         const valueProps = resolveProps.resolveProps(sep || [], {
-            ctx,
             indicator: 'map-value-ind',
+            next: value,
             offset: keyNode.range[2],
             onError,
             startOnNewline: !key || key.type === 'block-scalar'
@@ -2765,7 +2860,7 @@ function parseBlockScalarHeader({ offset, props }, strict, onError) {
             case 'comment':
                 if (strict && !hasSpace) {
                     const message = 'Comments must be separated from other tokens by white space characters';
-                    onError(token, 'COMMENT_SPACE', message);
+                    onError(token, 'MISSING_CHAR', message);
                 }
                 length += token.source.length;
                 comment = token.source.substring(1);
@@ -2816,8 +2911,8 @@ function resolveBlockSeq({ composeNode, composeEmptyNode }, ctx, bs, onError) {
     let offset = bs.offset;
     for (const { start, value } of bs.items) {
         const props = resolveProps.resolveProps(start, {
-            ctx,
             indicator: 'seq-item-ind',
+            next: value,
             offset,
             onError,
             startOnNewline: true
@@ -2870,8 +2965,8 @@ function resolveEnd(end, offset, reqSpace, onError) {
                     break;
                 case 'comment': {
                     if (reqSpace && !hasSpace)
-                        onError(token, 'COMMENT_SPACE', 'Comments must be separated from other tokens by white space characters');
-                    const cb = source.substring(1);
+                        onError(token, 'MISSING_CHAR', 'Comments must be separated from other tokens by white space characters');
+                    const cb = source.substring(1) || ' ';
                     if (!comment)
                         comment = cb;
                     else
@@ -2910,6 +3005,7 @@ var YAMLSeq = __nccwpck_require__(3810);
 var resolveEnd = __nccwpck_require__(1789);
 var resolveProps = __nccwpck_require__(9663);
 var utilContainsNewline = __nccwpck_require__(7801);
+var utilMapIncludes = __nccwpck_require__(379);
 
 const blockMsg = 'Block collections are not allowed within flow collections';
 const isBlock = (token) => token && (token.type === 'block-map' || token.type === 'block-seq');
@@ -2924,9 +3020,9 @@ function resolveFlowCollection({ composeNode, composeEmptyNode }, ctx, fc, onErr
     for (let i = 0; i < fc.items.length; ++i) {
         const { start, key, sep, value } = fc.items[i];
         const props = resolveProps.resolveProps(start, {
-            ctx,
             flow: fcName,
             indicator: 'explicit-key-ind',
+            next: key || (sep === null || sep === void 0 ? void 0 : sep[0]),
             offset,
             onError,
             startOnNewline: false
@@ -3004,9 +3100,9 @@ function resolveFlowCollection({ composeNode, composeEmptyNode }, ctx, fc, onErr
                 onError(keyNode.range, 'BLOCK_IN_FLOW', blockMsg);
             // value properties
             const valueProps = resolveProps.resolveProps(sep || [], {
-                ctx,
                 flow: fcName,
                 indicator: 'map-value-ind',
+                next: value,
                 offset: keyNode.range[2],
                 onError,
                 startOnNewline: false
@@ -3049,8 +3145,12 @@ function resolveFlowCollection({ composeNode, composeEmptyNode }, ctx, fc, onErr
                     keyNode.comment = valueProps.comment;
             }
             const pair = new Pair.Pair(keyNode, valueNode);
-            if (isMap)
-                coll.items.push(pair);
+            if (isMap) {
+                const map = coll;
+                if (utilMapIncludes.mapIncludes(ctx, map.items, keyNode))
+                    onError(keyStart, 'DUPLICATE_KEY', 'Map keys must be unique');
+                map.items.push(pair);
+            }
             else {
                 const map = new YAMLMap.YAMLMap(ctx.schema);
                 map.flow = true;
@@ -3064,7 +3164,7 @@ function resolveFlowCollection({ composeNode, composeEmptyNode }, ctx, fc, onErr
     const [ce, ...ee] = fc.end;
     let cePos = offset;
     if (ce && ce.source === expectedEnd)
-        cePos += ce.source.length;
+        cePos = ce.offset + ce.source.length;
     else {
         onError(offset + 1, 'MISSING_CHAR', `Expected ${fcName} to end with ${expectedEnd}`);
         if (ce && ce.source.length !== 1)
@@ -3316,19 +3416,27 @@ exports.resolveFlowScalar = resolveFlowScalar;
 
 
 
-function resolveProps(tokens, { ctx, flow, indicator, offset, onError, startOnNewline }) {
+function resolveProps(tokens, { flow, indicator, next, offset, onError, startOnNewline }) {
     let spaceBefore = false;
     let atNewline = startOnNewline;
     let hasSpace = startOnNewline;
     let comment = '';
     let commentSep = '';
     let hasNewline = false;
+    let reqSpace = false;
     let anchor = null;
     let tag = null;
     let comma = null;
     let found = null;
     let start = null;
     for (const token of tokens) {
+        if (reqSpace) {
+            if (token.type !== 'space' &&
+                token.type !== 'newline' &&
+                token.type !== 'comma')
+                onError(token.offset, 'MISSING_CHAR', 'Tags and anchors must be separated from the next token by white space');
+            reqSpace = false;
+        }
         switch (token.type) {
             case 'space':
                 // At the doc level, tabs at line start may be parsed
@@ -3342,23 +3450,29 @@ function resolveProps(tokens, { ctx, flow, indicator, offset, onError, startOnNe
                 hasSpace = true;
                 break;
             case 'comment': {
-                if (ctx.options.strict && !hasSpace)
-                    onError(token, 'COMMENT_SPACE', 'Comments must be separated from other tokens by white space characters');
-                const cb = token.source.substring(1);
+                if (!hasSpace)
+                    onError(token, 'MISSING_CHAR', 'Comments must be separated from other tokens by white space characters');
+                const cb = token.source.substring(1) || ' ';
                 if (!comment)
                     comment = cb;
                 else
                     comment += commentSep + cb;
                 commentSep = '';
+                atNewline = false;
                 break;
             }
             case 'newline':
-                if (atNewline && !comment)
-                    spaceBefore = true;
+                if (atNewline) {
+                    if (comment)
+                        comment += token.source;
+                    else
+                        spaceBefore = true;
+                }
+                else
+                    commentSep += token.source;
                 atNewline = true;
                 hasNewline = true;
                 hasSpace = true;
-                commentSep += token.source;
                 break;
             case 'anchor':
                 if (anchor)
@@ -3368,6 +3482,7 @@ function resolveProps(tokens, { ctx, flow, indicator, offset, onError, startOnNe
                     start = token.offset;
                 atNewline = false;
                 hasSpace = false;
+                reqSpace = true;
                 break;
             case 'tag': {
                 if (tag)
@@ -3377,6 +3492,7 @@ function resolveProps(tokens, { ctx, flow, indicator, offset, onError, startOnNe
                     start = token.offset;
                 atNewline = false;
                 hasSpace = false;
+                reqSpace = true;
                 break;
             }
             case indicator:
@@ -3405,6 +3521,13 @@ function resolveProps(tokens, { ctx, flow, indicator, offset, onError, startOnNe
     }
     const last = tokens[tokens.length - 1];
     const end = last ? last.offset + last.source.length : offset;
+    if (reqSpace &&
+        next &&
+        next.type !== 'space' &&
+        next.type !== 'newline' &&
+        next.type !== 'comma' &&
+        (next.type !== 'scalar' || next.source !== ''))
+        onError(next.offset, 'MISSING_CHAR', 'Tags and anchors must be separated from the next token by white space');
     return {
         comma,
         found,
@@ -3498,6 +3621,32 @@ function emptyScalarPosition(offset, before, pos) {
 }
 
 exports.emptyScalarPosition = emptyScalarPosition;
+
+
+/***/ }),
+
+/***/ 379:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+
+
+var Node = __nccwpck_require__(9752);
+
+function mapIncludes(ctx, items, search) {
+    const { uniqueKeys } = ctx.options;
+    if (uniqueKeys === false)
+        return false;
+    const isEqual = typeof uniqueKeys === 'function'
+        ? uniqueKeys
+        : (a, b) => a === b ||
+            (Node.isScalar(a) &&
+                Node.isScalar(b) &&
+                a.value === b.value &&
+                !(a.value === '<<' && ctx.schema.merge));
+    return items.some(pair => isEqual(pair.key, search));
+}
+
+exports.mapIncludes = mapIncludes;
 
 
 /***/ }),
@@ -5138,6 +5287,7 @@ const defaultOptions = {
     logLevel: 'warn',
     prettyErrors: true,
     strict: true,
+    uniqueKeys: true,
     version: '1.2'
 };
 
@@ -6411,38 +6561,6 @@ function includesNonEmpty(list) {
     }
     return false;
 }
-function atFirstEmptyLineAfterComments(start) {
-    let hasComment = false;
-    for (let i = 0; i < start.length; ++i) {
-        switch (start[i].type) {
-            case 'space':
-                break;
-            case 'comment':
-                hasComment = true;
-                break;
-            case 'newline':
-                if (!hasComment)
-                    return false;
-                break;
-            default:
-                return false;
-        }
-    }
-    if (hasComment) {
-        for (let i = start.length - 1; i >= 0; --i) {
-            switch (start[i].type) {
-                /* istanbul ignore next */
-                case 'space':
-                    break;
-                case 'newline':
-                    return true;
-                default:
-                    return false;
-            }
-        }
-    }
-    return false;
-}
 function isFlowToken(token) {
     switch (token === null || token === void 0 ? void 0 : token.type) {
         case 'alias':
@@ -6895,24 +7013,38 @@ class Parser {
         switch (this.type) {
             case 'newline':
                 this.onKeyLine = false;
-                if (!it.sep && atFirstEmptyLineAfterComments(it.start)) {
-                    const prev = map.items[map.items.length - 2];
-                    const end = (_a = prev === null || prev === void 0 ? void 0 : prev.value) === null || _a === void 0 ? void 0 : _a.end;
-                    if (Array.isArray(end)) {
-                        Array.prototype.push.apply(end, it.start);
-                        it.start = [this.sourceToken];
-                        return;
-                    }
+                if (it.value) {
+                    const end = 'end' in it.value ? it.value.end : undefined;
+                    const last = Array.isArray(end) ? end[end.length - 1] : undefined;
+                    if ((last === null || last === void 0 ? void 0 : last.type) === 'comment')
+                        end === null || end === void 0 ? void 0 : end.push(this.sourceToken);
+                    else
+                        map.items.push({ start: [this.sourceToken] });
                 }
-            // fallthrough
+                else if (it.sep)
+                    it.sep.push(this.sourceToken);
+                else
+                    it.start.push(this.sourceToken);
+                return;
             case 'space':
             case 'comment':
                 if (it.value)
                     map.items.push({ start: [this.sourceToken] });
                 else if (it.sep)
                     it.sep.push(this.sourceToken);
-                else
+                else {
+                    if (this.atIndentedComment(it.start, map.indent)) {
+                        const prev = map.items[map.items.length - 2];
+                        const end = (_a = prev === null || prev === void 0 ? void 0 : prev.value) === null || _a === void 0 ? void 0 : _a.end;
+                        if (Array.isArray(end)) {
+                            Array.prototype.push.apply(end, it.start);
+                            end.push(this.sourceToken);
+                            map.items.pop();
+                            return;
+                        }
+                    }
                     it.start.push(this.sourceToken);
+                }
                 return;
         }
         if (this.indent >= map.indent) {
@@ -7017,22 +7149,34 @@ class Parser {
         const it = seq.items[seq.items.length - 1];
         switch (this.type) {
             case 'newline':
-                if (!it.value && atFirstEmptyLineAfterComments(it.start)) {
-                    const prev = seq.items[seq.items.length - 2];
-                    const end = (_a = prev === null || prev === void 0 ? void 0 : prev.value) === null || _a === void 0 ? void 0 : _a.end;
-                    if (Array.isArray(end)) {
-                        Array.prototype.push.apply(end, it.start);
-                        it.start = [this.sourceToken];
-                        return;
-                    }
+                if (it.value) {
+                    const end = 'end' in it.value ? it.value.end : undefined;
+                    const last = Array.isArray(end) ? end[end.length - 1] : undefined;
+                    if ((last === null || last === void 0 ? void 0 : last.type) === 'comment')
+                        end === null || end === void 0 ? void 0 : end.push(this.sourceToken);
+                    else
+                        seq.items.push({ start: [this.sourceToken] });
                 }
-            // fallthrough
+                else
+                    it.start.push(this.sourceToken);
+                return;
             case 'space':
             case 'comment':
                 if (it.value)
                     seq.items.push({ start: [this.sourceToken] });
-                else
+                else {
+                    if (this.atIndentedComment(it.start, seq.indent)) {
+                        const prev = seq.items[seq.items.length - 2];
+                        const end = (_a = prev === null || prev === void 0 ? void 0 : prev.value) === null || _a === void 0 ? void 0 : _a.end;
+                        if (Array.isArray(end)) {
+                            Array.prototype.push.apply(end, it.start);
+                            end.push(this.sourceToken);
+                            seq.items.pop();
+                            return;
+                        }
+                    }
                     it.start.push(this.sourceToken);
+                }
                 return;
             case 'anchor':
             case 'tag':
@@ -7226,6 +7370,13 @@ class Parser {
             }
         }
         return null;
+    }
+    atIndentedComment(start, indent) {
+        if (this.type !== 'comment')
+            return false;
+        if (this.indent <= indent)
+            return false;
+        return start.every(st => st.type === 'newline' || st.type === 'space');
     }
     *documentEnd(docEnd) {
         if (this.type !== 'doc-mode') {
@@ -8547,26 +8698,6 @@ exports.timestamp = timestamp;
 
 /***/ }),
 
-/***/ 2146:
-/***/ ((__unused_webpack_module, exports) => {
-
-
-
-function addComment(str, indent, comment) {
-    return !comment
-        ? str
-        : comment.includes('\n')
-            ? `${str}\n` + comment.replace(/^/gm, `${indent || ''}#`)
-            : str.endsWith(' ')
-                ? `${str}#${comment}`
-                : `${str} #${comment}`;
-}
-
-exports.addComment = addComment;
-
-
-/***/ }),
-
 /***/ 1883:
 /***/ ((__unused_webpack_module, exports) => {
 
@@ -8824,9 +8955,9 @@ exports.stringify = stringify;
 
 
 var Collection = __nccwpck_require__(9797);
-var addComment = __nccwpck_require__(2146);
-var stringify = __nccwpck_require__(1922);
 var Node = __nccwpck_require__(9752);
+var stringify = __nccwpck_require__(1922);
+var stringifyComment = __nccwpck_require__(5577);
 
 function stringifyCollection({ comment, flow, items }, ctx, { blockItem, flowChars, itemIndent, onChompKeep, onComment }) {
     const { indent, indentStep } = ctx;
@@ -8841,10 +8972,17 @@ function stringifyCollection({ comment, flow, items }, ctx, { blockItem, flowCha
         if (Node.isNode(item)) {
             if (!chompKeep && item.spaceBefore)
                 nodes.push({ comment: true, str: '' });
-            if (item.commentBefore) {
+            let cb = item.commentBefore;
+            if (cb && chompKeep)
+                cb = cb.replace(/^\n+/, '');
+            if (cb) {
+                if (/^\n+$/.test(cb))
+                    cb = cb.substring(1);
                 // This match will always succeed on a non-empty string
-                for (const line of item.commentBefore.match(/^.*$/gm))
-                    nodes.push({ comment: true, str: `#${line}` });
+                for (const line of cb.match(/^.*$/gm)) {
+                    const str = line === ' ' ? '#' : line ? `#${line}` : '';
+                    nodes.push({ comment: true, str });
+                }
             }
             if (item.comment) {
                 comment = item.comment;
@@ -8856,10 +8994,17 @@ function stringifyCollection({ comment, flow, items }, ctx, { blockItem, flowCha
             if (ik) {
                 if (!chompKeep && ik.spaceBefore)
                     nodes.push({ comment: true, str: '' });
-                if (ik.commentBefore) {
+                let cb = ik.commentBefore;
+                if (cb && chompKeep)
+                    cb = cb.replace(/^\n+/, '');
+                if (cb) {
+                    if (/^\n+$/.test(cb))
+                        cb = cb.substring(1);
                     // This match will always succeed on a non-empty string
-                    for (const line of ik.commentBefore.match(/^.*$/gm))
-                        nodes.push({ comment: true, str: `#${line}` });
+                    for (const line of cb.match(/^.*$/gm)) {
+                        const str = line === ' ' ? '#' : line ? `#${line}` : '';
+                        nodes.push({ comment: true, str });
+                    }
                 }
                 if (ik.comment)
                     singleLineOutput = false;
@@ -8881,7 +9026,7 @@ function stringifyCollection({ comment, flow, items }, ctx, { blockItem, flowCha
         let str = stringify.stringify(item, ctx, () => (comment = null), () => (chompKeep = true));
         if (inFlow && i < items.length - 1)
             str += ',';
-        str = addComment.addComment(str, itemIndent, comment);
+        str = stringifyComment.addComment(str, itemIndent, comment);
         if (chompKeep && (comment || inFlow))
             chompKeep = false;
         nodes.push({ comment: false, str });
@@ -8921,7 +9066,7 @@ function stringifyCollection({ comment, flow, items }, ctx, { blockItem, flowCha
             str += s ? `\n${indent}${s}` : '\n';
     }
     if (comment) {
-        str += '\n' + comment.replace(/^/gm, `${indent}#`);
+        str += '\n' + stringifyComment.stringifyComment(comment, indent);
         if (onComment)
             onComment();
     }
@@ -8935,14 +9080,38 @@ exports.stringifyCollection = stringifyCollection;
 
 /***/ }),
 
+/***/ 5577:
+/***/ ((__unused_webpack_module, exports) => {
+
+
+
+const stringifyComment = (comment, indent) => /^\n+$/.test(comment)
+    ? comment.substring(1)
+    : comment.replace(/^(?!$)(?: $)?/gm, `${indent}#`);
+function addComment(str, indent, comment) {
+    return !comment
+        ? str
+        : comment.includes('\n')
+            ? `${str}\n` + stringifyComment(comment, indent)
+            : str.endsWith(' ')
+                ? `${str}#${comment}`
+                : `${str} #${comment}`;
+}
+
+exports.addComment = addComment;
+exports.stringifyComment = stringifyComment;
+
+
+/***/ }),
+
 /***/ 9615:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 
 
 var Node = __nccwpck_require__(9752);
-var addComment = __nccwpck_require__(2146);
 var stringify = __nccwpck_require__(1922);
+var stringifyComment = __nccwpck_require__(5577);
 
 function stringifyDocument(doc, options) {
     const lines = [];
@@ -8961,7 +9130,7 @@ function stringifyDocument(doc, options) {
     if (doc.commentBefore) {
         if (lines.length !== 1)
             lines.unshift('');
-        lines.unshift(doc.commentBefore.replace(/^/gm, '#'));
+        lines.unshift(stringifyComment.stringifyComment(doc.commentBefore, ''));
     }
     const ctx = stringify.createStringifyContext(doc, options);
     let chompKeep = false;
@@ -8971,7 +9140,7 @@ function stringifyDocument(doc, options) {
             if (doc.contents.spaceBefore && hasDirectives)
                 lines.push('');
             if (doc.contents.commentBefore)
-                lines.push(doc.contents.commentBefore.replace(/^/gm, '#'));
+                lines.push(stringifyComment.stringifyComment(doc.contents.commentBefore, ''));
             // top-level block scalars need to be indented if followed by a comment
             ctx.forceBlockIndent = !!doc.comment;
             contentComment = doc.contents.comment;
@@ -8979,7 +9148,7 @@ function stringifyDocument(doc, options) {
         const onChompKeep = contentComment ? undefined : () => (chompKeep = true);
         let body = stringify.stringify(doc.contents, ctx, () => (contentComment = null), onChompKeep);
         if (contentComment)
-            body = addComment.addComment(body, '', contentComment);
+            body = stringifyComment.addComment(body, '', contentComment);
         if ((body[0] === '|' || body[0] === '>') &&
             lines[lines.length - 1] === '---') {
             // Top-level block scalars with a preceding doc marker ought to use the
@@ -8992,10 +9161,13 @@ function stringifyDocument(doc, options) {
     else {
         lines.push(stringify.stringify(doc.contents, ctx));
     }
-    if (doc.comment) {
+    let dc = doc.comment;
+    if (dc && chompKeep)
+        dc = dc.replace(/^\n+/, '');
+    if (dc) {
         if ((!chompKeep || contentComment) && lines[lines.length - 1] !== '')
             lines.push('');
-        lines.push(doc.comment.replace(/^/gm, '#'));
+        lines.push(stringifyComment.stringifyComment(dc, ''));
     }
     return lines.join('\n') + '\n';
 }
@@ -9045,8 +9217,8 @@ exports.stringifyNumber = stringifyNumber;
 
 var Node = __nccwpck_require__(9752);
 var Scalar = __nccwpck_require__(8160);
-var addComment = __nccwpck_require__(2146);
 var stringify = __nccwpck_require__(1922);
+var stringifyComment = __nccwpck_require__(5577);
 
 function stringifyPair({ key, value }, ctx, onComment, onChompKeep) {
     const { allNullValues, doc, indent, indentStep, options: { indentSeq, simpleKeys } } = ctx;
@@ -9092,22 +9264,20 @@ function stringifyPair({ key, value }, ctx, onComment, onChompKeep) {
             keyComment = null;
         if (chompKeep && !keyComment && onChompKeep)
             onChompKeep();
-        return addComment.addComment(`? ${str}`, ctx.indent, keyComment);
+        return stringifyComment.addComment(`? ${str}`, ctx.indent, keyComment);
     }
     if (keyCommentDone)
         keyComment = null;
     str = explicitKey
-        ? `? ${addComment.addComment(str, ctx.indent, keyComment)}\n${indent}:`
-        : addComment.addComment(`${str}:`, ctx.indent, keyComment);
+        ? `? ${stringifyComment.addComment(str, ctx.indent, keyComment)}\n${indent}:`
+        : stringifyComment.addComment(`${str}:`, ctx.indent, keyComment);
     let vcb = '';
     let valueComment = null;
     if (Node.isNode(value)) {
         if (value.spaceBefore)
             vcb = '\n';
-        if (value.commentBefore) {
-            const cs = value.commentBefore.replace(/^/gm, `${ctx.indent}#`);
-            vcb += `\n${cs}`;
-        }
+        if (value.commentBefore)
+            vcb += `\n${stringifyComment.stringifyComment(value.commentBefore, ctx.indent)}`;
         valueComment = value.comment;
     }
     else if (value && typeof value === 'object') {
@@ -9151,7 +9321,7 @@ function stringifyPair({ key, value }, ctx, onComment, onChompKeep) {
             valueComment = null;
         if (chompKeep && !valueComment && onChompKeep)
             onChompKeep();
-        return addComment.addComment(str + ws + valueStr, ctx.indent, valueComment);
+        return stringifyComment.addComment(str + ws + valueStr, ctx.indent, valueComment);
     }
 }
 
@@ -9679,6 +9849,20 @@ module.exports = require("os");;
 /***/ ((module) => {
 
 module.exports = require("path");;
+
+/***/ }),
+
+/***/ 4304:
+/***/ ((module) => {
+
+module.exports = require("string_decoder");;
+
+/***/ }),
+
+/***/ 8213:
+/***/ ((module) => {
+
+module.exports = require("timers");;
 
 /***/ }),
 
