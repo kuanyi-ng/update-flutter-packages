@@ -1,4 +1,4 @@
-import * as outdated from '../src/outdatedPackages'
+import * as outdated from '../src/outdated-packages'
 import * as interfaces from '../src/interfaces'
 
 describe('splitAndRemoveEmptyString', () => {

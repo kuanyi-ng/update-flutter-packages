@@ -2,7 +2,7 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 5383:
+/***/ 4326:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -93,29 +93,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+/* eslint-disable i18n-text/no-en */
 const core = __importStar(__nccwpck_require__(2186));
-const flutterCli_1 = __nccwpck_require__(5383);
-const outdatedPackages_1 = __nccwpck_require__(6817);
-const pubspecService_1 = __nccwpck_require__(4525);
+const outdated_packages_1 = __nccwpck_require__(7504);
+const pubspec_service_1 = __nccwpck_require__(8718);
+const flutter_cli_1 = __nccwpck_require__(4326);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const pathToPubspecFile = core.getInput('pathToPubspecFile');
         try {
             core.info('Get packages written in pubspec.yaml.');
-            yield flutterCli_1.runFlutterPubGet();
+            yield flutter_cli_1.runFlutterPubGet();
             core.info(`Reading pubspec yaml located at ${pathToPubspecFile}.`);
-            const pubspec = pubspecService_1.readPubspec(pathToPubspecFile);
+            const pubspec = pubspec_service_1.readPubspec(pathToPubspecFile);
             core.info('Get info about outdated packages.');
-            const outdatedPackages = yield outdatedPackages_1.getOutdatedPackages();
+            const outdatedPackages = yield outdated_packages_1.getOutdatedPackages();
             core.info('Check if any updates is required.');
-            const updatesRequired = outdatedPackages_1.checkIfUpdatesRequired(outdatedPackages);
+            const updatesRequired = outdated_packages_1.checkIfUpdatesRequired(outdatedPackages);
             // eslint-disable-next-line no-console
             console.log(outdatedPackages);
             if (updatesRequired) {
                 core.info('Update content of pubspec.yaml.');
-                pubspecService_1.updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages);
+                pubspec_service_1.updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages);
                 core.info('Get packages written in pubspec.yaml (with updated versions).');
-                yield flutterCli_1.runFlutterPubGet();
+                yield flutter_cli_1.runFlutterPubGet();
             }
             else {
                 core.info('All packages are up to date.');
@@ -134,7 +135,7 @@ run();
 
 /***/ }),
 
-/***/ 6817:
+/***/ 7504:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -149,10 +150,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.splitAndRemoveEmptyString = exports.checkIfUpdatesRequired = exports.parseIntoPackageVersionInfo = exports.parseIntoArrayOfPackageVersionInfo = exports.splitIntoDependencySections = exports.parseIntoOutdatedPackages = exports.getOutdatedPackages = void 0;
-const flutterCli_1 = __nccwpck_require__(5383);
+const flutter_cli_1 = __nccwpck_require__(4326);
 function getOutdatedPackages() {
     return __awaiter(this, void 0, void 0, function* () {
-        const { output, error } = yield flutterCli_1.runFlutterPubOutdated();
+        const { output, error } = yield flutter_cli_1.runFlutterPubOutdated();
         if (error.length > 0) {
             throw Error(`
     an error occured during the execution of flutter pub outdated.
@@ -250,19 +251,19 @@ exports.splitAndRemoveEmptyString = splitAndRemoveEmptyString;
 
 /***/ }),
 
-/***/ 4525:
+/***/ 8718:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.updatePackageToResolvableVersion = exports.updateAllPackagesInPubspec = exports.writePubspec = exports.readPubspec = void 0;
-const yamlService_1 = __nccwpck_require__(9093);
+const yaml_service_1 = __nccwpck_require__(684);
 function readPubspec(pathToPubspec) {
-    return yamlService_1.readYaml(pathToPubspec);
+    return yaml_service_1.readYaml(pathToPubspec);
 }
 exports.readPubspec = readPubspec;
 function writePubspec(pubspec, pathToPubspec) {
-    yamlService_1.writeYaml(pubspec, pathToPubspec);
+    yaml_service_1.writeYaml(pubspec, pathToPubspec);
 }
 exports.writePubspec = writePubspec;
 function updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages) {
@@ -301,7 +302,7 @@ exports.updatePackageToResolvableVersion = updatePackageToResolvableVersion;
 
 /***/ }),
 
-/***/ 9093:
+/***/ 684:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
@@ -329,8 +330,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.writeYaml = exports.readYaml = void 0;
-const yaml_1 = __importDefault(__nccwpck_require__(5065));
 const fs = __importStar(__nccwpck_require__(5747));
+const yaml_1 = __importDefault(__nccwpck_require__(5065));
 function readYaml(pathToYamlFile) {
     try {
         const yamlFile = fs.readFileSync(pathToYamlFile, 'utf-8');
@@ -492,7 +493,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
+exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.notice = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
 const command_1 = __nccwpck_require__(7351);
 const file_command_1 = __nccwpck_require__(717);
 const utils_1 = __nccwpck_require__(5278);
@@ -670,19 +671,30 @@ exports.debug = debug;
 /**
  * Adds an error issue
  * @param message error issue message. Errors will be converted to string via toString()
+ * @param properties optional properties to add to the annotation.
  */
-function error(message) {
-    command_1.issue('error', message instanceof Error ? message.toString() : message);
+function error(message, properties = {}) {
+    command_1.issueCommand('error', utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
 }
 exports.error = error;
 /**
- * Adds an warning issue
+ * Adds a warning issue
  * @param message warning issue message. Errors will be converted to string via toString()
+ * @param properties optional properties to add to the annotation.
  */
-function warning(message) {
-    command_1.issue('warning', message instanceof Error ? message.toString() : message);
+function warning(message, properties = {}) {
+    command_1.issueCommand('warning', utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
 }
 exports.warning = warning;
+/**
+ * Adds a notice issue
+ * @param message notice issue message. Errors will be converted to string via toString()
+ * @param properties optional properties to add to the annotation.
+ */
+function notice(message, properties = {}) {
+    command_1.issueCommand('notice', utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
+}
+exports.notice = notice;
 /**
  * Writes info to log with console.log.
  * @param message info message
@@ -814,7 +826,7 @@ exports.issueCommand = issueCommand;
 // We use any as a valid input type
 /* eslint-disable @typescript-eslint/no-explicit-any */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.toCommandValue = void 0;
+exports.toCommandProperties = exports.toCommandValue = void 0;
 /**
  * Sanitizes an input into a string so it can be passed into issueCommand safely
  * @param input input to sanitize into a string
@@ -829,6 +841,25 @@ function toCommandValue(input) {
     return JSON.stringify(input);
 }
 exports.toCommandValue = toCommandValue;
+/**
+ *
+ * @param annotationProperties
+ * @returns The command properties to send with the actual annotation command
+ * See IssueCommandProperties: https://github.com/actions/runner/blob/main/src/Runner.Worker/ActionCommandManager.cs#L646
+ */
+function toCommandProperties(annotationProperties) {
+    if (!Object.keys(annotationProperties).length) {
+        return {};
+    }
+    return {
+        title: annotationProperties.title,
+        line: annotationProperties.startLine,
+        endLine: annotationProperties.endLine,
+        col: annotationProperties.startColumn,
+        endColumn: annotationProperties.endColumn
+    };
+}
+exports.toCommandProperties = toCommandProperties;
 //# sourceMappingURL=utils.js.map
 
 /***/ }),
@@ -2248,6 +2279,8 @@ function composeNode(ctx, token, props, onError) {
             console.log(token);
             throw new Error(`Unsupporten token type: ${token.type}`);
     }
+    if (anchor && node.anchor === '')
+        onError(anchor, 'BAD_ALIAS', 'Anchor cannot be an empty string');
     if (spaceBefore)
         node.spaceBefore = true;
     if (comment) {
@@ -2266,8 +2299,11 @@ function composeEmptyNode(ctx, offset, before, pos, { spaceBefore, comment, anch
         source: ''
     };
     const node = composeScalar.composeScalar(ctx, token, tag, onError);
-    if (anchor)
+    if (anchor) {
         node.anchor = anchor.source.substring(1);
+        if (node.anchor === '')
+            onError(anchor, 'BAD_ALIAS', 'Anchor cannot be an empty string');
+    }
     if (spaceBefore)
         node.spaceBefore = true;
     if (comment)
@@ -2276,6 +2312,8 @@ function composeEmptyNode(ctx, offset, before, pos, { spaceBefore, comment, anch
 }
 function composeAlias({ options }, { offset, source, end }, onError) {
     const alias = new Alias.Alias(source.substring(1));
+    if (alias.source === '')
+        onError(offset, 'BAD_ALIAS', 'Alias cannot be an empty string');
     const valueEnd = offset + source.length;
     const re = resolveEnd.resolveEnd(end, valueEnd, options.strict, onError);
     alias.range = [offset, valueEnd, re.offset];
@@ -2395,6 +2433,7 @@ function getErrorPos(src) {
     return [offset, offset + (typeof source === 'string' ? source.length : 1)];
 }
 function parsePrelude(prelude) {
+    var _a;
     let comment = '';
     let atComment = false;
     let afterEmptyLine = false;
@@ -2409,7 +2448,7 @@ function parsePrelude(prelude) {
                 afterEmptyLine = false;
                 break;
             case '%':
-                if (prelude[i + 1][0] !== '#')
+                if (((_a = prelude[i + 1]) === null || _a === void 0 ? void 0 : _a[0]) !== '#')
                     i += 1;
                 atComment = false;
                 break;
@@ -3237,25 +3276,31 @@ function resolveFlowScalar(scalar, strict, onError) {
     };
 }
 function plainValue(source, onError) {
-    let message = '';
+    let badChar = '';
     switch (source[0]) {
         /* istanbul ignore next should not happen */
         case '\t':
-            message = 'Plain value cannot start with a tab character';
+            badChar = 'a tab character';
+            break;
+        case ',':
+            badChar = 'flow indicator character ,';
+            break;
+        case '%':
+            badChar = 'directive indicator character %';
             break;
         case '|':
         case '>': {
-            message = `Plain value cannot start with block scalar indicator ${source[0]}`;
+            badChar = `block scalar indicator ${source[0]}`;
             break;
         }
         case '@':
         case '`': {
-            message = `Plain value cannot start with reserved character ${source[0]}`;
+            badChar = `reserved character ${source[0]}`;
             break;
         }
     }
-    if (message)
-        onError(0, 'BAD_SCALAR_START', message);
+    if (badChar)
+        onError(0, 'BAD_SCALAR_START', `Plain value cannot start with ${badChar}`);
     return foldLines(source);
 }
 function singleQuotedValue(source, onError) {
@@ -4141,8 +4186,12 @@ function createNode(value, tagName, ctx) {
     if (!tagObj) {
         if (value && typeof value.toJSON === 'function')
             value = value.toJSON();
-        if (!value || typeof value !== 'object')
-            return new Scalar.Scalar(value);
+        if (!value || typeof value !== 'object') {
+            const node = new Scalar.Scalar(value);
+            if (ref)
+                ref.node = node;
+            return node;
+        }
         tagObj =
             value instanceof Map
                 ? schema[Node.MAP]
@@ -5173,9 +5222,9 @@ const isMergeKey = (key) => key === MERGE_KEY ||
 // Keys in mapping nodes earlier in the sequence override keys specified in
 // later mapping nodes. -- http://yaml.org/type/merge.html
 function mergeToJSMap(ctx, map, value) {
-    const source = ctx && Node.isAlias(value) ? value.resolve(ctx.doc) : null;
+    const source = ctx && Node.isAlias(value) ? value.resolve(ctx.doc) : value;
     if (!Node.isMap(source))
-        throw new Error('Merge sources must be map aliases');
+        throw new Error('Merge sources must be maps or map aliases');
     const srcMap = source.toJSON(null, ctx, Map);
     for (const [key, value] of srcMap) {
         if (map instanceof Map) {
@@ -5907,9 +5956,11 @@ function isEmpty(ch) {
             return false;
     }
 }
-const invalidFlowScalarChars = [',', '[', ']', '{', '}'];
-const invalidIdentifierChars = [' ', ',', '[', ']', '{', '}', '\n', '\r', '\t'];
-const isNotIdentifierChar = (ch) => !ch || invalidIdentifierChars.includes(ch);
+const hexDigits = '0123456789ABCDEFabcdef'.split('');
+const tagChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-#;/?:@&=+$_.!~*'()".split('');
+const invalidFlowScalarChars = ',[]{}'.split('');
+const invalidAnchorChars = ' ,[]{}\n\r\t'.split('');
+const isNotAnchorChar = (ch) => !ch || invalidAnchorChars.includes(ch);
 /**
  * Splits an input string into lexical tokens, i.e. smaller strings that are
  * easily identifiable by `tokens.tokenType()`.
@@ -6153,7 +6204,7 @@ class Lexer {
                 yield* this.pushCount(1);
                 return 'doc';
             case '*':
-                yield* this.pushUntil(isNotIdentifierChar);
+                yield* this.pushUntil(isNotAnchorChar);
                 return 'doc';
             case '"':
             case "'":
@@ -6221,7 +6272,7 @@ class Lexer {
                 this.flowLevel -= 1;
                 return this.flowLevel ? 'flow' : 'doc';
             case '*':
-                yield* this.pushUntil(isNotIdentifierChar);
+                yield* this.pushUntil(isNotAnchorChar);
                 return 'flow';
             case '"':
             case "'":
@@ -6421,13 +6472,11 @@ class Lexer {
     *pushIndicators() {
         switch (this.charAt(0)) {
             case '!':
-                if (this.charAt(1) === '<')
-                    return ((yield* this.pushVerbatimTag()) +
-                        (yield* this.pushSpaces(true)) +
-                        (yield* this.pushIndicators()));
-            // fallthrough
+                return ((yield* this.pushTag()) +
+                    (yield* this.pushSpaces(true)) +
+                    (yield* this.pushIndicators()));
             case '&':
-                return ((yield* this.pushUntil(isNotIdentifierChar)) +
+                return ((yield* this.pushUntil(isNotAnchorChar)) +
                     (yield* this.pushSpaces(true)) +
                     (yield* this.pushIndicators()));
             case ':':
@@ -6443,12 +6492,30 @@ class Lexer {
         }
         return 0;
     }
-    *pushVerbatimTag() {
-        let i = this.pos + 2;
-        let ch = this.buffer[i];
-        while (!isEmpty(ch) && ch !== '>')
-            ch = this.buffer[++i];
-        return yield* this.pushToIndex(ch === '>' ? i + 1 : i, false);
+    *pushTag() {
+        if (this.charAt(1) === '<') {
+            let i = this.pos + 2;
+            let ch = this.buffer[i];
+            while (!isEmpty(ch) && ch !== '>')
+                ch = this.buffer[++i];
+            return yield* this.pushToIndex(ch === '>' ? i + 1 : i, false);
+        }
+        else {
+            let i = this.pos + 1;
+            let ch = this.buffer[i];
+            while (ch) {
+                if (tagChars.includes(ch))
+                    ch = this.buffer[++i];
+                else if (ch === '%' &&
+                    hexDigits.includes(this.buffer[i + 1]) &&
+                    hexDigits.includes(this.buffer[i + 2])) {
+                    ch = this.buffer[(i += 3)];
+                }
+                else
+                    break;
+            }
+            return yield* this.pushToIndex(i, false);
+        }
     }
     *pushNewline() {
         const ch = this.buffer[this.pos];
@@ -7832,7 +7899,7 @@ exports.intOct = intOct;
 
 /***/ }),
 
-/***/ 7504:
+/***/ 1467:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 
@@ -7947,7 +8014,7 @@ var string = __nccwpck_require__(1576);
 var bool = __nccwpck_require__(7369);
 var float = __nccwpck_require__(616);
 var int = __nccwpck_require__(2521);
-var schema = __nccwpck_require__(7504);
+var schema = __nccwpck_require__(1467);
 var schema$1 = __nccwpck_require__(8553);
 var binary = __nccwpck_require__(5758);
 var omap = __nccwpck_require__(4486);
@@ -9813,63 +9880,63 @@ exports.visit = visit;
 /***/ 2357:
 /***/ ((module) => {
 
-module.exports = require("assert");;
+module.exports = require("assert");
 
 /***/ }),
 
 /***/ 3129:
 /***/ ((module) => {
 
-module.exports = require("child_process");;
+module.exports = require("child_process");
 
 /***/ }),
 
 /***/ 8614:
 /***/ ((module) => {
 
-module.exports = require("events");;
+module.exports = require("events");
 
 /***/ }),
 
 /***/ 5747:
 /***/ ((module) => {
 
-module.exports = require("fs");;
+module.exports = require("fs");
 
 /***/ }),
 
 /***/ 2087:
 /***/ ((module) => {
 
-module.exports = require("os");;
+module.exports = require("os");
 
 /***/ }),
 
 /***/ 5622:
 /***/ ((module) => {
 
-module.exports = require("path");;
+module.exports = require("path");
 
 /***/ }),
 
 /***/ 4304:
 /***/ ((module) => {
 
-module.exports = require("string_decoder");;
+module.exports = require("string_decoder");
 
 /***/ }),
 
 /***/ 8213:
 /***/ ((module) => {
 
-module.exports = require("timers");;
+module.exports = require("timers");
 
 /***/ }),
 
 /***/ 1669:
 /***/ ((module) => {
 
-module.exports = require("util");;
+module.exports = require("util");
 
 /***/ })
 
@@ -9908,7 +9975,9 @@ module.exports = require("util");;
 /************************************************************************/
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
-/******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";/************************************************************************/
+/******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
+/******/ 	
+/************************************************************************/
 /******/ 	
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
