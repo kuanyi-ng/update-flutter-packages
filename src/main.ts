@@ -1,8 +1,8 @@
 /* eslint-disable i18n-text/no-en */
 import * as core from '@actions/core'
-import {runFlutterPubGet} from './flutterCli'
-import {checkIfUpdatesRequired, getOutdatedPackages} from './outdatedPackages'
-import {readPubspec, updateAllPackagesInPubspec} from './pubspecService'
+import {runFlutterPubGet} from './flutter-cli'
+import {checkIfUpdatesRequired, getOutdatedPackages} from './outdated-packages'
+import {readPubspec, updateAllPackagesInPubspec} from './pubspec-service'
 
 async function run(): Promise<void> {
   const pathToPubspecFile = core.getInput('pathToPubspecFile')
