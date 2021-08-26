@@ -1,5 +1,5 @@
-import {runFlutterPubOutdated} from './flutterCli'
-import {Packages, PackageVersionInfo} from './interfaces'
+import {runFlutterPubOutdated} from './flutter-cli'
+import {PackageVersionInfo, Packages} from './interfaces'
 
 export async function getOutdatedPackages(): Promise<Packages> {
   const {output, error} = await runFlutterPubOutdated()
