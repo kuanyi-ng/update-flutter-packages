@@ -1,6 +1,6 @@
 import * as YAML from 'yaml'
 import * as interfaces from '../src/interfaces'
-import * as pubspecService from '../src/pubspecService'
+import * as pubspecService from '../src/pubspec-service'
 
 describe('updatePackageToResolvableVersion', () => {
   let pubspec: YAML.Document.Parsed
