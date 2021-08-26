@@ -1,4 +1,4 @@
-import {exec, ExecOptions} from '@actions/exec'
+import {ExecOptions, exec} from '@actions/exec'
 import {CliOutputs} from './interfaces'
 
 export async function runFlutterPubGet(): Promise<CliOutputs> {

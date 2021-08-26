@@ -1,5 +1,5 @@
-import {Packages} from './interfaces'
 import {Pubspec, readYaml, writeYaml} from './yaml-service'
+import {Packages} from './interfaces'
 
 export function readPubspec(pathToPubspec: string): Pubspec {
   return readYaml(pathToPubspec)

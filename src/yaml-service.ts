@@ -1,5 +1,5 @@
-import YAML from 'yaml'
 import * as fs from 'fs'
+import YAML from 'yaml'
 
 export function readYaml(pathToYamlFile: string): YAML.Document.Parsed {
   try {
