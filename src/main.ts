@@ -37,7 +37,7 @@ async function run(): Promise<void> {
     // to decide if a new pull request should be made or not
     core.setOutput('pullRequestRequired', updatesRequired)
   } catch (error) {
-    core.setFailed(error.message)
+    core.setFailed(`Action failed with error: ${error}`)
   }
 }
 

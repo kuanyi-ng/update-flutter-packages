@@ -32,7 +32,7 @@ function runFlutterPubGet() {
                 error += data.toString();
             }
         };
-        yield exec_1.exec('flutter', ['pub', 'get'], options);
+        yield (0, exec_1.exec)('flutter', ['pub', 'get'], options);
         return { output, error };
     });
 }
@@ -51,7 +51,7 @@ function runFlutterPubOutdated() {
                 error += data.toString();
             }
         };
-        yield exec_1.exec('flutter', ['pub', 'outdated'], options);
+        yield (0, exec_1.exec)('flutter', ['pub', 'outdated'], options);
         return { output, error };
     });
 }
@@ -103,20 +103,20 @@ function run() {
         const pathToPubspecFile = core.getInput('pathToPubspecFile');
         try {
             core.info('Get packages written in pubspec.yaml.');
-            yield flutter_cli_1.runFlutterPubGet();
+            yield (0, flutter_cli_1.runFlutterPubGet)();
             core.info(`Reading pubspec yaml located at ${pathToPubspecFile}.`);
-            const pubspec = pubspec_service_1.readPubspec(pathToPubspecFile);
+            const pubspec = (0, pubspec_service_1.readPubspec)(pathToPubspecFile);
             core.info('Get info about outdated packages.');
-            const outdatedPackages = yield outdated_packages_1.getOutdatedPackages();
+            const outdatedPackages = yield (0, outdated_packages_1.getOutdatedPackages)();
             core.info('Check if any updates is required.');
-            const updatesRequired = outdated_packages_1.checkIfUpdatesRequired(outdatedPackages);
+            const updatesRequired = (0, outdated_packages_1.checkIfUpdatesRequired)(outdatedPackages);
             // eslint-disable-next-line no-console
             console.log(outdatedPackages);
             if (updatesRequired) {
                 core.info('Update content of pubspec.yaml.');
-                pubspec_service_1.updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages);
+                (0, pubspec_service_1.updateAllPackagesInPubspec)(pathToPubspecFile, pubspec, outdatedPackages);
                 core.info('Get packages written in pubspec.yaml (with updated versions).');
-                yield flutter_cli_1.runFlutterPubGet();
+                yield (0, flutter_cli_1.runFlutterPubGet)();
             }
             else {
                 core.info('All packages are up to date.');
@@ -126,7 +126,7 @@ function run() {
             core.setOutput('pullRequestRequired', updatesRequired);
         }
         catch (error) {
-            core.setFailed(error.message);
+            core.setFailed(`Action failed with error: ${error}`);
         }
     });
 }
@@ -153,7 +153,7 @@ exports.splitAndRemoveEmptyString = exports.checkIfUpdatesRequired = exports.par
 const flutter_cli_1 = __nccwpck_require__(4326);
 function getOutdatedPackages() {
     return __awaiter(this, void 0, void 0, function* () {
-        const { output, error } = yield flutter_cli_1.runFlutterPubOutdated();
+        const { output, error } = yield (0, flutter_cli_1.runFlutterPubOutdated)();
         if (error.length > 0) {
             throw Error(`
     an error occured during the execution of flutter pub outdated.
@@ -259,11 +259,11 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.updatePackageToResolvableVersion = exports.updateAllPackagesInPubspec = exports.writePubspec = exports.readPubspec = void 0;
 const yaml_service_1 = __nccwpck_require__(684);
 function readPubspec(pathToPubspec) {
-    return yaml_service_1.readYaml(pathToPubspec);
+    return (0, yaml_service_1.readYaml)(pathToPubspec);
 }
 exports.readPubspec = readPubspec;
 function writePubspec(pubspec, pathToPubspec) {
-    yaml_service_1.writeYaml(pubspec, pathToPubspec);
+    (0, yaml_service_1.writeYaml)(pubspec, pathToPubspec);
 }
 exports.writePubspec = writePubspec;
 function updateAllPackagesInPubspec(pathToPubspecFile, pubspec, outdatedPackages) {
