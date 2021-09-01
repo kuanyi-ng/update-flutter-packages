@@ -35,6 +35,11 @@ This actions requires:
 
 ## Usage
 ```yaml
+# use the latest version
+- name: Update Flutter Packages
+  uses: kuanyi-ng/update-flutter-packages@main
+
+# use a specific version
 - name: Update Flutter Packages
   uses: kuanyi-ng/update-flutter-packages@v0.1.0
 ```
@@ -73,7 +78,7 @@ jobs:
           channel: 'stable' # or: 'beta' or 'dev'
     
       - name: Update Flutter Packages
-        uses: kuanyi-ng/update-flutter-packages@v0.1.0
+        uses: kuanyi-ng/update-flutter-packages@main
 
       - name: Create Pull Request to Apply Dependencies Updates
         uses: peter-evans/create-pull-request@v3
