@@ -1,10 +1,10 @@
 require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
-/******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 4326:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
+"use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -63,6 +63,7 @@ exports.runFlutterPubOutdated = runFlutterPubOutdated;
 /***/ 3109:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
+"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -138,6 +139,7 @@ run();
 /***/ 7504:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
+"use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -254,6 +256,7 @@ exports.splitAndRemoveEmptyString = splitAndRemoveEmptyString;
 /***/ 8718:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.updatePackageToResolvableVersion = exports.updateAllPackagesInPubspec = exports.writePubspec = exports.readPubspec = void 0;
@@ -305,6 +308,7 @@ exports.updatePackageToResolvableVersion = updatePackageToResolvableVersion;
 /***/ 684:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
+"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -365,6 +369,7 @@ exports.writeYaml = writeYaml;
 /***/ 7351:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
+"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -463,6 +468,7 @@ function escapeProperty(s) {
 /***/ 2186:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
+"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -493,12 +499,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.notice = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
+exports.getIDToken = exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.notice = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
 const command_1 = __nccwpck_require__(7351);
 const file_command_1 = __nccwpck_require__(717);
 const utils_1 = __nccwpck_require__(5278);
 const os = __importStar(__nccwpck_require__(2087));
 const path = __importStar(__nccwpck_require__(5622));
+const oidc_utils_1 = __nccwpck_require__(8041);
 /**
  * The code to exit an action
  */
@@ -767,6 +774,12 @@ function getState(name) {
     return process.env[`STATE_${name}`] || '';
 }
 exports.getState = getState;
+function getIDToken(aud) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield oidc_utils_1.OidcClient.getIDToken(aud);
+    });
+}
+exports.getIDToken = getIDToken;
 //# sourceMappingURL=core.js.map
 
 /***/ }),
@@ -774,6 +787,7 @@ exports.getState = getState;
 /***/ 717:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
+"use strict";
 
 // For internal use, subject to change.
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -819,9 +833,94 @@ exports.issueCommand = issueCommand;
 
 /***/ }),
 
+/***/ 8041:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.OidcClient = void 0;
+const http_client_1 = __nccwpck_require__(9925);
+const auth_1 = __nccwpck_require__(3702);
+const core_1 = __nccwpck_require__(2186);
+class OidcClient {
+    static createHttpClient(allowRetry = true, maxRetry = 10) {
+        const requestOptions = {
+            allowRetries: allowRetry,
+            maxRetries: maxRetry
+        };
+        return new http_client_1.HttpClient('actions/oidc-client', [new auth_1.BearerCredentialHandler(OidcClient.getRequestToken())], requestOptions);
+    }
+    static getRequestToken() {
+        const token = process.env['ACTIONS_ID_TOKEN_REQUEST_TOKEN'];
+        if (!token) {
+            throw new Error('Unable to get ACTIONS_ID_TOKEN_REQUEST_TOKEN env variable');
+        }
+        return token;
+    }
+    static getIDTokenUrl() {
+        const runtimeUrl = process.env['ACTIONS_ID_TOKEN_REQUEST_URL'];
+        if (!runtimeUrl) {
+            throw new Error('Unable to get ACTIONS_ID_TOKEN_REQUEST_URL env variable');
+        }
+        return runtimeUrl;
+    }
+    static getCall(id_token_url) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            const httpclient = OidcClient.createHttpClient();
+            const res = yield httpclient
+                .getJson(id_token_url)
+                .catch(error => {
+                throw new Error(`Failed to get ID Token. \n 
+        Error Code : ${error.statusCode}\n 
+        Error Message: ${error.result.message}`);
+            });
+            const id_token = (_a = res.result) === null || _a === void 0 ? void 0 : _a.value;
+            if (!id_token) {
+                throw new Error('Response json body do not have ID Token field');
+            }
+            return id_token;
+        });
+    }
+    static getIDToken(audience) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // New ID Token is requested from action service
+                let id_token_url = OidcClient.getIDTokenUrl();
+                if (audience) {
+                    const encodedAudience = encodeURIComponent(audience);
+                    id_token_url = `${id_token_url}&audience=${encodedAudience}`;
+                }
+                core_1.debug(`ID token url is ${id_token_url}`);
+                const id_token = yield OidcClient.getCall(id_token_url);
+                core_1.setSecret(id_token);
+                return id_token;
+            }
+            catch (error) {
+                throw new Error(`Error message: ${error.message}`);
+            }
+        });
+    }
+}
+exports.OidcClient = OidcClient;
+//# sourceMappingURL=oidc-utils.js.map
+
+/***/ }),
+
 /***/ 5278:
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 // We use any as a valid input type
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -853,6 +952,7 @@ function toCommandProperties(annotationProperties) {
     }
     return {
         title: annotationProperties.title,
+        file: annotationProperties.file,
         line: annotationProperties.startLine,
         endLine: annotationProperties.endLine,
         col: annotationProperties.startColumn,
@@ -867,6 +967,7 @@ exports.toCommandProperties = toCommandProperties;
 /***/ 1514:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
+"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -976,6 +1077,7 @@ exports.getExecOutput = getExecOutput;
 /***/ 8159:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
+"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -1597,9 +1699,686 @@ class ExecState extends events.EventEmitter {
 
 /***/ }),
 
+/***/ 3702:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+class BasicCredentialHandler {
+    constructor(username, password) {
+        this.username = username;
+        this.password = password;
+    }
+    prepareRequest(options) {
+        options.headers['Authorization'] =
+            'Basic ' +
+                Buffer.from(this.username + ':' + this.password).toString('base64');
+    }
+    // This handler cannot handle 401
+    canHandleAuthentication(response) {
+        return false;
+    }
+    handleAuthentication(httpClient, requestInfo, objs) {
+        return null;
+    }
+}
+exports.BasicCredentialHandler = BasicCredentialHandler;
+class BearerCredentialHandler {
+    constructor(token) {
+        this.token = token;
+    }
+    // currently implements pre-authorization
+    // TODO: support preAuth = false where it hooks on 401
+    prepareRequest(options) {
+        options.headers['Authorization'] = 'Bearer ' + this.token;
+    }
+    // This handler cannot handle 401
+    canHandleAuthentication(response) {
+        return false;
+    }
+    handleAuthentication(httpClient, requestInfo, objs) {
+        return null;
+    }
+}
+exports.BearerCredentialHandler = BearerCredentialHandler;
+class PersonalAccessTokenCredentialHandler {
+    constructor(token) {
+        this.token = token;
+    }
+    // currently implements pre-authorization
+    // TODO: support preAuth = false where it hooks on 401
+    prepareRequest(options) {
+        options.headers['Authorization'] =
+            'Basic ' + Buffer.from('PAT:' + this.token).toString('base64');
+    }
+    // This handler cannot handle 401
+    canHandleAuthentication(response) {
+        return false;
+    }
+    handleAuthentication(httpClient, requestInfo, objs) {
+        return null;
+    }
+}
+exports.PersonalAccessTokenCredentialHandler = PersonalAccessTokenCredentialHandler;
+
+
+/***/ }),
+
+/***/ 9925:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const http = __nccwpck_require__(8605);
+const https = __nccwpck_require__(7211);
+const pm = __nccwpck_require__(6443);
+let tunnel;
+var HttpCodes;
+(function (HttpCodes) {
+    HttpCodes[HttpCodes["OK"] = 200] = "OK";
+    HttpCodes[HttpCodes["MultipleChoices"] = 300] = "MultipleChoices";
+    HttpCodes[HttpCodes["MovedPermanently"] = 301] = "MovedPermanently";
+    HttpCodes[HttpCodes["ResourceMoved"] = 302] = "ResourceMoved";
+    HttpCodes[HttpCodes["SeeOther"] = 303] = "SeeOther";
+    HttpCodes[HttpCodes["NotModified"] = 304] = "NotModified";
+    HttpCodes[HttpCodes["UseProxy"] = 305] = "UseProxy";
+    HttpCodes[HttpCodes["SwitchProxy"] = 306] = "SwitchProxy";
+    HttpCodes[HttpCodes["TemporaryRedirect"] = 307] = "TemporaryRedirect";
+    HttpCodes[HttpCodes["PermanentRedirect"] = 308] = "PermanentRedirect";
+    HttpCodes[HttpCodes["BadRequest"] = 400] = "BadRequest";
+    HttpCodes[HttpCodes["Unauthorized"] = 401] = "Unauthorized";
+    HttpCodes[HttpCodes["PaymentRequired"] = 402] = "PaymentRequired";
+    HttpCodes[HttpCodes["Forbidden"] = 403] = "Forbidden";
+    HttpCodes[HttpCodes["NotFound"] = 404] = "NotFound";
+    HttpCodes[HttpCodes["MethodNotAllowed"] = 405] = "MethodNotAllowed";
+    HttpCodes[HttpCodes["NotAcceptable"] = 406] = "NotAcceptable";
+    HttpCodes[HttpCodes["ProxyAuthenticationRequired"] = 407] = "ProxyAuthenticationRequired";
+    HttpCodes[HttpCodes["RequestTimeout"] = 408] = "RequestTimeout";
+    HttpCodes[HttpCodes["Conflict"] = 409] = "Conflict";
+    HttpCodes[HttpCodes["Gone"] = 410] = "Gone";
+    HttpCodes[HttpCodes["TooManyRequests"] = 429] = "TooManyRequests";
+    HttpCodes[HttpCodes["InternalServerError"] = 500] = "InternalServerError";
+    HttpCodes[HttpCodes["NotImplemented"] = 501] = "NotImplemented";
+    HttpCodes[HttpCodes["BadGateway"] = 502] = "BadGateway";
+    HttpCodes[HttpCodes["ServiceUnavailable"] = 503] = "ServiceUnavailable";
+    HttpCodes[HttpCodes["GatewayTimeout"] = 504] = "GatewayTimeout";
+})(HttpCodes = exports.HttpCodes || (exports.HttpCodes = {}));
+var Headers;
+(function (Headers) {
+    Headers["Accept"] = "accept";
+    Headers["ContentType"] = "content-type";
+})(Headers = exports.Headers || (exports.Headers = {}));
+var MediaTypes;
+(function (MediaTypes) {
+    MediaTypes["ApplicationJson"] = "application/json";
+})(MediaTypes = exports.MediaTypes || (exports.MediaTypes = {}));
+/**
+ * Returns the proxy URL, depending upon the supplied url and proxy environment variables.
+ * @param serverUrl  The server URL where the request will be sent. For example, https://api.github.com
+ */
+function getProxyUrl(serverUrl) {
+    let proxyUrl = pm.getProxyUrl(new URL(serverUrl));
+    return proxyUrl ? proxyUrl.href : '';
+}
+exports.getProxyUrl = getProxyUrl;
+const HttpRedirectCodes = [
+    HttpCodes.MovedPermanently,
+    HttpCodes.ResourceMoved,
+    HttpCodes.SeeOther,
+    HttpCodes.TemporaryRedirect,
+    HttpCodes.PermanentRedirect
+];
+const HttpResponseRetryCodes = [
+    HttpCodes.BadGateway,
+    HttpCodes.ServiceUnavailable,
+    HttpCodes.GatewayTimeout
+];
+const RetryableHttpVerbs = ['OPTIONS', 'GET', 'DELETE', 'HEAD'];
+const ExponentialBackoffCeiling = 10;
+const ExponentialBackoffTimeSlice = 5;
+class HttpClientError extends Error {
+    constructor(message, statusCode) {
+        super(message);
+        this.name = 'HttpClientError';
+        this.statusCode = statusCode;
+        Object.setPrototypeOf(this, HttpClientError.prototype);
+    }
+}
+exports.HttpClientError = HttpClientError;
+class HttpClientResponse {
+    constructor(message) {
+        this.message = message;
+    }
+    readBody() {
+        return new Promise(async (resolve, reject) => {
+            let output = Buffer.alloc(0);
+            this.message.on('data', (chunk) => {
+                output = Buffer.concat([output, chunk]);
+            });
+            this.message.on('end', () => {
+                resolve(output.toString());
+            });
+        });
+    }
+}
+exports.HttpClientResponse = HttpClientResponse;
+function isHttps(requestUrl) {
+    let parsedUrl = new URL(requestUrl);
+    return parsedUrl.protocol === 'https:';
+}
+exports.isHttps = isHttps;
+class HttpClient {
+    constructor(userAgent, handlers, requestOptions) {
+        this._ignoreSslError = false;
+        this._allowRedirects = true;
+        this._allowRedirectDowngrade = false;
+        this._maxRedirects = 50;
+        this._allowRetries = false;
+        this._maxRetries = 1;
+        this._keepAlive = false;
+        this._disposed = false;
+        this.userAgent = userAgent;
+        this.handlers = handlers || [];
+        this.requestOptions = requestOptions;
+        if (requestOptions) {
+            if (requestOptions.ignoreSslError != null) {
+                this._ignoreSslError = requestOptions.ignoreSslError;
+            }
+            this._socketTimeout = requestOptions.socketTimeout;
+            if (requestOptions.allowRedirects != null) {
+                this._allowRedirects = requestOptions.allowRedirects;
+            }
+            if (requestOptions.allowRedirectDowngrade != null) {
+                this._allowRedirectDowngrade = requestOptions.allowRedirectDowngrade;
+            }
+            if (requestOptions.maxRedirects != null) {
+                this._maxRedirects = Math.max(requestOptions.maxRedirects, 0);
+            }
+            if (requestOptions.keepAlive != null) {
+                this._keepAlive = requestOptions.keepAlive;
+            }
+            if (requestOptions.allowRetries != null) {
+                this._allowRetries = requestOptions.allowRetries;
+            }
+            if (requestOptions.maxRetries != null) {
+                this._maxRetries = requestOptions.maxRetries;
+            }
+        }
+    }
+    options(requestUrl, additionalHeaders) {
+        return this.request('OPTIONS', requestUrl, null, additionalHeaders || {});
+    }
+    get(requestUrl, additionalHeaders) {
+        return this.request('GET', requestUrl, null, additionalHeaders || {});
+    }
+    del(requestUrl, additionalHeaders) {
+        return this.request('DELETE', requestUrl, null, additionalHeaders || {});
+    }
+    post(requestUrl, data, additionalHeaders) {
+        return this.request('POST', requestUrl, data, additionalHeaders || {});
+    }
+    patch(requestUrl, data, additionalHeaders) {
+        return this.request('PATCH', requestUrl, data, additionalHeaders || {});
+    }
+    put(requestUrl, data, additionalHeaders) {
+        return this.request('PUT', requestUrl, data, additionalHeaders || {});
+    }
+    head(requestUrl, additionalHeaders) {
+        return this.request('HEAD', requestUrl, null, additionalHeaders || {});
+    }
+    sendStream(verb, requestUrl, stream, additionalHeaders) {
+        return this.request(verb, requestUrl, stream, additionalHeaders);
+    }
+    /**
+     * Gets a typed object from an endpoint
+     * Be aware that not found returns a null.  Other errors (4xx, 5xx) reject the promise
+     */
+    async getJson(requestUrl, additionalHeaders = {}) {
+        additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
+        let res = await this.get(requestUrl, additionalHeaders);
+        return this._processResponse(res, this.requestOptions);
+    }
+    async postJson(requestUrl, obj, additionalHeaders = {}) {
+        let data = JSON.stringify(obj, null, 2);
+        additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
+        additionalHeaders[Headers.ContentType] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.ContentType, MediaTypes.ApplicationJson);
+        let res = await this.post(requestUrl, data, additionalHeaders);
+        return this._processResponse(res, this.requestOptions);
+    }
+    async putJson(requestUrl, obj, additionalHeaders = {}) {
+        let data = JSON.stringify(obj, null, 2);
+        additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
+        additionalHeaders[Headers.ContentType] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.ContentType, MediaTypes.ApplicationJson);
+        let res = await this.put(requestUrl, data, additionalHeaders);
+        return this._processResponse(res, this.requestOptions);
+    }
+    async patchJson(requestUrl, obj, additionalHeaders = {}) {
+        let data = JSON.stringify(obj, null, 2);
+        additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
+        additionalHeaders[Headers.ContentType] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.ContentType, MediaTypes.ApplicationJson);
+        let res = await this.patch(requestUrl, data, additionalHeaders);
+        return this._processResponse(res, this.requestOptions);
+    }
+    /**
+     * Makes a raw http request.
+     * All other methods such as get, post, patch, and request ultimately call this.
+     * Prefer get, del, post and patch
+     */
+    async request(verb, requestUrl, data, headers) {
+        if (this._disposed) {
+            throw new Error('Client has already been disposed.');
+        }
+        let parsedUrl = new URL(requestUrl);
+        let info = this._prepareRequest(verb, parsedUrl, headers);
+        // Only perform retries on reads since writes may not be idempotent.
+        let maxTries = this._allowRetries && RetryableHttpVerbs.indexOf(verb) != -1
+            ? this._maxRetries + 1
+            : 1;
+        let numTries = 0;
+        let response;
+        while (numTries < maxTries) {
+            response = await this.requestRaw(info, data);
+            // Check if it's an authentication challenge
+            if (response &&
+                response.message &&
+                response.message.statusCode === HttpCodes.Unauthorized) {
+                let authenticationHandler;
+                for (let i = 0; i < this.handlers.length; i++) {
+                    if (this.handlers[i].canHandleAuthentication(response)) {
+                        authenticationHandler = this.handlers[i];
+                        break;
+                    }
+                }
+                if (authenticationHandler) {
+                    return authenticationHandler.handleAuthentication(this, info, data);
+                }
+                else {
+                    // We have received an unauthorized response but have no handlers to handle it.
+                    // Let the response return to the caller.
+                    return response;
+                }
+            }
+            let redirectsRemaining = this._maxRedirects;
+            while (HttpRedirectCodes.indexOf(response.message.statusCode) != -1 &&
+                this._allowRedirects &&
+                redirectsRemaining > 0) {
+                const redirectUrl = response.message.headers['location'];
+                if (!redirectUrl) {
+                    // if there's no location to redirect to, we won't
+                    break;
+                }
+                let parsedRedirectUrl = new URL(redirectUrl);
+                if (parsedUrl.protocol == 'https:' &&
+                    parsedUrl.protocol != parsedRedirectUrl.protocol &&
+                    !this._allowRedirectDowngrade) {
+                    throw new Error('Redirect from HTTPS to HTTP protocol. This downgrade is not allowed for security reasons. If you want to allow this behavior, set the allowRedirectDowngrade option to true.');
+                }
+                // we need to finish reading the response before reassigning response
+                // which will leak the open socket.
+                await response.readBody();
+                // strip authorization header if redirected to a different hostname
+                if (parsedRedirectUrl.hostname !== parsedUrl.hostname) {
+                    for (let header in headers) {
+                        // header names are case insensitive
+                        if (header.toLowerCase() === 'authorization') {
+                            delete headers[header];
+                        }
+                    }
+                }
+                // let's make the request with the new redirectUrl
+                info = this._prepareRequest(verb, parsedRedirectUrl, headers);
+                response = await this.requestRaw(info, data);
+                redirectsRemaining--;
+            }
+            if (HttpResponseRetryCodes.indexOf(response.message.statusCode) == -1) {
+                // If not a retry code, return immediately instead of retrying
+                return response;
+            }
+            numTries += 1;
+            if (numTries < maxTries) {
+                await response.readBody();
+                await this._performExponentialBackoff(numTries);
+            }
+        }
+        return response;
+    }
+    /**
+     * Needs to be called if keepAlive is set to true in request options.
+     */
+    dispose() {
+        if (this._agent) {
+            this._agent.destroy();
+        }
+        this._disposed = true;
+    }
+    /**
+     * Raw request.
+     * @param info
+     * @param data
+     */
+    requestRaw(info, data) {
+        return new Promise((resolve, reject) => {
+            let callbackForResult = function (err, res) {
+                if (err) {
+                    reject(err);
+                }
+                resolve(res);
+            };
+            this.requestRawWithCallback(info, data, callbackForResult);
+        });
+    }
+    /**
+     * Raw request with callback.
+     * @param info
+     * @param data
+     * @param onResult
+     */
+    requestRawWithCallback(info, data, onResult) {
+        let socket;
+        if (typeof data === 'string') {
+            info.options.headers['Content-Length'] = Buffer.byteLength(data, 'utf8');
+        }
+        let callbackCalled = false;
+        let handleResult = (err, res) => {
+            if (!callbackCalled) {
+                callbackCalled = true;
+                onResult(err, res);
+            }
+        };
+        let req = info.httpModule.request(info.options, (msg) => {
+            let res = new HttpClientResponse(msg);
+            handleResult(null, res);
+        });
+        req.on('socket', sock => {
+            socket = sock;
+        });
+        // If we ever get disconnected, we want the socket to timeout eventually
+        req.setTimeout(this._socketTimeout || 3 * 60000, () => {
+            if (socket) {
+                socket.end();
+            }
+            handleResult(new Error('Request timeout: ' + info.options.path), null);
+        });
+        req.on('error', function (err) {
+            // err has statusCode property
+            // res should have headers
+            handleResult(err, null);
+        });
+        if (data && typeof data === 'string') {
+            req.write(data, 'utf8');
+        }
+        if (data && typeof data !== 'string') {
+            data.on('close', function () {
+                req.end();
+            });
+            data.pipe(req);
+        }
+        else {
+            req.end();
+        }
+    }
+    /**
+     * Gets an http agent. This function is useful when you need an http agent that handles
+     * routing through a proxy server - depending upon the url and proxy environment variables.
+     * @param serverUrl  The server URL where the request will be sent. For example, https://api.github.com
+     */
+    getAgent(serverUrl) {
+        let parsedUrl = new URL(serverUrl);
+        return this._getAgent(parsedUrl);
+    }
+    _prepareRequest(method, requestUrl, headers) {
+        const info = {};
+        info.parsedUrl = requestUrl;
+        const usingSsl = info.parsedUrl.protocol === 'https:';
+        info.httpModule = usingSsl ? https : http;
+        const defaultPort = usingSsl ? 443 : 80;
+        info.options = {};
+        info.options.host = info.parsedUrl.hostname;
+        info.options.port = info.parsedUrl.port
+            ? parseInt(info.parsedUrl.port)
+            : defaultPort;
+        info.options.path =
+            (info.parsedUrl.pathname || '') + (info.parsedUrl.search || '');
+        info.options.method = method;
+        info.options.headers = this._mergeHeaders(headers);
+        if (this.userAgent != null) {
+            info.options.headers['user-agent'] = this.userAgent;
+        }
+        info.options.agent = this._getAgent(info.parsedUrl);
+        // gives handlers an opportunity to participate
+        if (this.handlers) {
+            this.handlers.forEach(handler => {
+                handler.prepareRequest(info.options);
+            });
+        }
+        return info;
+    }
+    _mergeHeaders(headers) {
+        const lowercaseKeys = obj => Object.keys(obj).reduce((c, k) => ((c[k.toLowerCase()] = obj[k]), c), {});
+        if (this.requestOptions && this.requestOptions.headers) {
+            return Object.assign({}, lowercaseKeys(this.requestOptions.headers), lowercaseKeys(headers));
+        }
+        return lowercaseKeys(headers || {});
+    }
+    _getExistingOrDefaultHeader(additionalHeaders, header, _default) {
+        const lowercaseKeys = obj => Object.keys(obj).reduce((c, k) => ((c[k.toLowerCase()] = obj[k]), c), {});
+        let clientHeader;
+        if (this.requestOptions && this.requestOptions.headers) {
+            clientHeader = lowercaseKeys(this.requestOptions.headers)[header];
+        }
+        return additionalHeaders[header] || clientHeader || _default;
+    }
+    _getAgent(parsedUrl) {
+        let agent;
+        let proxyUrl = pm.getProxyUrl(parsedUrl);
+        let useProxy = proxyUrl && proxyUrl.hostname;
+        if (this._keepAlive && useProxy) {
+            agent = this._proxyAgent;
+        }
+        if (this._keepAlive && !useProxy) {
+            agent = this._agent;
+        }
+        // if agent is already assigned use that agent.
+        if (!!agent) {
+            return agent;
+        }
+        const usingSsl = parsedUrl.protocol === 'https:';
+        let maxSockets = 100;
+        if (!!this.requestOptions) {
+            maxSockets = this.requestOptions.maxSockets || http.globalAgent.maxSockets;
+        }
+        if (useProxy) {
+            // If using proxy, need tunnel
+            if (!tunnel) {
+                tunnel = __nccwpck_require__(4294);
+            }
+            const agentOptions = {
+                maxSockets: maxSockets,
+                keepAlive: this._keepAlive,
+                proxy: {
+                    ...((proxyUrl.username || proxyUrl.password) && {
+                        proxyAuth: `${proxyUrl.username}:${proxyUrl.password}`
+                    }),
+                    host: proxyUrl.hostname,
+                    port: proxyUrl.port
+                }
+            };
+            let tunnelAgent;
+            const overHttps = proxyUrl.protocol === 'https:';
+            if (usingSsl) {
+                tunnelAgent = overHttps ? tunnel.httpsOverHttps : tunnel.httpsOverHttp;
+            }
+            else {
+                tunnelAgent = overHttps ? tunnel.httpOverHttps : tunnel.httpOverHttp;
+            }
+            agent = tunnelAgent(agentOptions);
+            this._proxyAgent = agent;
+        }
+        // if reusing agent across request and tunneling agent isn't assigned create a new agent
+        if (this._keepAlive && !agent) {
+            const options = { keepAlive: this._keepAlive, maxSockets: maxSockets };
+            agent = usingSsl ? new https.Agent(options) : new http.Agent(options);
+            this._agent = agent;
+        }
+        // if not using private agent and tunnel agent isn't setup then use global agent
+        if (!agent) {
+            agent = usingSsl ? https.globalAgent : http.globalAgent;
+        }
+        if (usingSsl && this._ignoreSslError) {
+            // we don't want to set NODE_TLS_REJECT_UNAUTHORIZED=0 since that will affect request for entire process
+            // http.RequestOptions doesn't expose a way to modify RequestOptions.agent.options
+            // we have to cast it to any and change it directly
+            agent.options = Object.assign(agent.options || {}, {
+                rejectUnauthorized: false
+            });
+        }
+        return agent;
+    }
+    _performExponentialBackoff(retryNumber) {
+        retryNumber = Math.min(ExponentialBackoffCeiling, retryNumber);
+        const ms = ExponentialBackoffTimeSlice * Math.pow(2, retryNumber);
+        return new Promise(resolve => setTimeout(() => resolve(), ms));
+    }
+    static dateTimeDeserializer(key, value) {
+        if (typeof value === 'string') {
+            let a = new Date(value);
+            if (!isNaN(a.valueOf())) {
+                return a;
+            }
+        }
+        return value;
+    }
+    async _processResponse(res, options) {
+        return new Promise(async (resolve, reject) => {
+            const statusCode = res.message.statusCode;
+            const response = {
+                statusCode: statusCode,
+                result: null,
+                headers: {}
+            };
+            // not found leads to null obj returned
+            if (statusCode == HttpCodes.NotFound) {
+                resolve(response);
+            }
+            let obj;
+            let contents;
+            // get the result from the body
+            try {
+                contents = await res.readBody();
+                if (contents && contents.length > 0) {
+                    if (options && options.deserializeDates) {
+                        obj = JSON.parse(contents, HttpClient.dateTimeDeserializer);
+                    }
+                    else {
+                        obj = JSON.parse(contents);
+                    }
+                    response.result = obj;
+                }
+                response.headers = res.message.headers;
+            }
+            catch (err) {
+                // Invalid resource (contents not json);  leaving result obj null
+            }
+            // note that 3xx redirects are handled by the http layer.
+            if (statusCode > 299) {
+                let msg;
+                // if exception/error in body, attempt to get better error
+                if (obj && obj.message) {
+                    msg = obj.message;
+                }
+                else if (contents && contents.length > 0) {
+                    // it may be the case that the exception is in the body message as string
+                    msg = contents;
+                }
+                else {
+                    msg = 'Failed request: (' + statusCode + ')';
+                }
+                let err = new HttpClientError(msg, statusCode);
+                err.result = response.result;
+                reject(err);
+            }
+            else {
+                resolve(response);
+            }
+        });
+    }
+}
+exports.HttpClient = HttpClient;
+
+
+/***/ }),
+
+/***/ 6443:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+function getProxyUrl(reqUrl) {
+    let usingSsl = reqUrl.protocol === 'https:';
+    let proxyUrl;
+    if (checkBypass(reqUrl)) {
+        return proxyUrl;
+    }
+    let proxyVar;
+    if (usingSsl) {
+        proxyVar = process.env['https_proxy'] || process.env['HTTPS_PROXY'];
+    }
+    else {
+        proxyVar = process.env['http_proxy'] || process.env['HTTP_PROXY'];
+    }
+    if (proxyVar) {
+        proxyUrl = new URL(proxyVar);
+    }
+    return proxyUrl;
+}
+exports.getProxyUrl = getProxyUrl;
+function checkBypass(reqUrl) {
+    if (!reqUrl.hostname) {
+        return false;
+    }
+    let noProxy = process.env['no_proxy'] || process.env['NO_PROXY'] || '';
+    if (!noProxy) {
+        return false;
+    }
+    // Determine the request port
+    let reqPort;
+    if (reqUrl.port) {
+        reqPort = Number(reqUrl.port);
+    }
+    else if (reqUrl.protocol === 'http:') {
+        reqPort = 80;
+    }
+    else if (reqUrl.protocol === 'https:') {
+        reqPort = 443;
+    }
+    // Format the request hostname and hostname with port
+    let upperReqHosts = [reqUrl.hostname.toUpperCase()];
+    if (typeof reqPort === 'number') {
+        upperReqHosts.push(`${upperReqHosts[0]}:${reqPort}`);
+    }
+    // Compare request host against noproxy
+    for (let upperNoProxyItem of noProxy
+        .split(',')
+        .map(x => x.trim().toUpperCase())
+        .filter(x => x)) {
+        if (upperReqHosts.some(x => x === upperNoProxyItem)) {
+            return true;
+        }
+    }
+    return false;
+}
+exports.checkBypass = checkBypass;
+
+
+/***/ }),
+
 /***/ 1962:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
+"use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -1808,6 +2587,7 @@ function isUnixExecutable(stats) {
 /***/ 7436:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
+"use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -2123,9 +2903,290 @@ function copyFile(srcFile, destFile, force) {
 
 /***/ }),
 
+/***/ 4294:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+module.exports = __nccwpck_require__(4219);
+
+
+/***/ }),
+
+/***/ 4219:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+var net = __nccwpck_require__(1631);
+var tls = __nccwpck_require__(4016);
+var http = __nccwpck_require__(8605);
+var https = __nccwpck_require__(7211);
+var events = __nccwpck_require__(8614);
+var assert = __nccwpck_require__(2357);
+var util = __nccwpck_require__(1669);
+
+
+exports.httpOverHttp = httpOverHttp;
+exports.httpsOverHttp = httpsOverHttp;
+exports.httpOverHttps = httpOverHttps;
+exports.httpsOverHttps = httpsOverHttps;
+
+
+function httpOverHttp(options) {
+  var agent = new TunnelingAgent(options);
+  agent.request = http.request;
+  return agent;
+}
+
+function httpsOverHttp(options) {
+  var agent = new TunnelingAgent(options);
+  agent.request = http.request;
+  agent.createSocket = createSecureSocket;
+  agent.defaultPort = 443;
+  return agent;
+}
+
+function httpOverHttps(options) {
+  var agent = new TunnelingAgent(options);
+  agent.request = https.request;
+  return agent;
+}
+
+function httpsOverHttps(options) {
+  var agent = new TunnelingAgent(options);
+  agent.request = https.request;
+  agent.createSocket = createSecureSocket;
+  agent.defaultPort = 443;
+  return agent;
+}
+
+
+function TunnelingAgent(options) {
+  var self = this;
+  self.options = options || {};
+  self.proxyOptions = self.options.proxy || {};
+  self.maxSockets = self.options.maxSockets || http.Agent.defaultMaxSockets;
+  self.requests = [];
+  self.sockets = [];
+
+  self.on('free', function onFree(socket, host, port, localAddress) {
+    var options = toOptions(host, port, localAddress);
+    for (var i = 0, len = self.requests.length; i < len; ++i) {
+      var pending = self.requests[i];
+      if (pending.host === options.host && pending.port === options.port) {
+        // Detect the request to connect same origin server,
+        // reuse the connection.
+        self.requests.splice(i, 1);
+        pending.request.onSocket(socket);
+        return;
+      }
+    }
+    socket.destroy();
+    self.removeSocket(socket);
+  });
+}
+util.inherits(TunnelingAgent, events.EventEmitter);
+
+TunnelingAgent.prototype.addRequest = function addRequest(req, host, port, localAddress) {
+  var self = this;
+  var options = mergeOptions({request: req}, self.options, toOptions(host, port, localAddress));
+
+  if (self.sockets.length >= this.maxSockets) {
+    // We are over limit so we'll add it to the queue.
+    self.requests.push(options);
+    return;
+  }
+
+  // If we are under maxSockets create a new one.
+  self.createSocket(options, function(socket) {
+    socket.on('free', onFree);
+    socket.on('close', onCloseOrRemove);
+    socket.on('agentRemove', onCloseOrRemove);
+    req.onSocket(socket);
+
+    function onFree() {
+      self.emit('free', socket, options);
+    }
+
+    function onCloseOrRemove(err) {
+      self.removeSocket(socket);
+      socket.removeListener('free', onFree);
+      socket.removeListener('close', onCloseOrRemove);
+      socket.removeListener('agentRemove', onCloseOrRemove);
+    }
+  });
+};
+
+TunnelingAgent.prototype.createSocket = function createSocket(options, cb) {
+  var self = this;
+  var placeholder = {};
+  self.sockets.push(placeholder);
+
+  var connectOptions = mergeOptions({}, self.proxyOptions, {
+    method: 'CONNECT',
+    path: options.host + ':' + options.port,
+    agent: false,
+    headers: {
+      host: options.host + ':' + options.port
+    }
+  });
+  if (options.localAddress) {
+    connectOptions.localAddress = options.localAddress;
+  }
+  if (connectOptions.proxyAuth) {
+    connectOptions.headers = connectOptions.headers || {};
+    connectOptions.headers['Proxy-Authorization'] = 'Basic ' +
+        new Buffer(connectOptions.proxyAuth).toString('base64');
+  }
+
+  debug('making CONNECT request');
+  var connectReq = self.request(connectOptions);
+  connectReq.useChunkedEncodingByDefault = false; // for v0.6
+  connectReq.once('response', onResponse); // for v0.6
+  connectReq.once('upgrade', onUpgrade);   // for v0.6
+  connectReq.once('connect', onConnect);   // for v0.7 or later
+  connectReq.once('error', onError);
+  connectReq.end();
+
+  function onResponse(res) {
+    // Very hacky. This is necessary to avoid http-parser leaks.
+    res.upgrade = true;
+  }
+
+  function onUpgrade(res, socket, head) {
+    // Hacky.
+    process.nextTick(function() {
+      onConnect(res, socket, head);
+    });
+  }
+
+  function onConnect(res, socket, head) {
+    connectReq.removeAllListeners();
+    socket.removeAllListeners();
+
+    if (res.statusCode !== 200) {
+      debug('tunneling socket could not be established, statusCode=%d',
+        res.statusCode);
+      socket.destroy();
+      var error = new Error('tunneling socket could not be established, ' +
+        'statusCode=' + res.statusCode);
+      error.code = 'ECONNRESET';
+      options.request.emit('error', error);
+      self.removeSocket(placeholder);
+      return;
+    }
+    if (head.length > 0) {
+      debug('got illegal response body from proxy');
+      socket.destroy();
+      var error = new Error('got illegal response body from proxy');
+      error.code = 'ECONNRESET';
+      options.request.emit('error', error);
+      self.removeSocket(placeholder);
+      return;
+    }
+    debug('tunneling connection has established');
+    self.sockets[self.sockets.indexOf(placeholder)] = socket;
+    return cb(socket);
+  }
+
+  function onError(cause) {
+    connectReq.removeAllListeners();
+
+    debug('tunneling socket could not be established, cause=%s\n',
+          cause.message, cause.stack);
+    var error = new Error('tunneling socket could not be established, ' +
+                          'cause=' + cause.message);
+    error.code = 'ECONNRESET';
+    options.request.emit('error', error);
+    self.removeSocket(placeholder);
+  }
+};
+
+TunnelingAgent.prototype.removeSocket = function removeSocket(socket) {
+  var pos = this.sockets.indexOf(socket)
+  if (pos === -1) {
+    return;
+  }
+  this.sockets.splice(pos, 1);
+
+  var pending = this.requests.shift();
+  if (pending) {
+    // If we have pending requests and a socket gets closed a new one
+    // needs to be created to take over in the pool for the one that closed.
+    this.createSocket(pending, function(socket) {
+      pending.request.onSocket(socket);
+    });
+  }
+};
+
+function createSecureSocket(options, cb) {
+  var self = this;
+  TunnelingAgent.prototype.createSocket.call(self, options, function(socket) {
+    var hostHeader = options.request.getHeader('host');
+    var tlsOptions = mergeOptions({}, self.options, {
+      socket: socket,
+      servername: hostHeader ? hostHeader.replace(/:.*$/, '') : options.host
+    });
+
+    // 0 is dummy port for v0.6
+    var secureSocket = tls.connect(0, tlsOptions);
+    self.sockets[self.sockets.indexOf(socket)] = secureSocket;
+    cb(secureSocket);
+  });
+}
+
+
+function toOptions(host, port, localAddress) {
+  if (typeof host === 'string') { // since v0.10
+    return {
+      host: host,
+      port: port,
+      localAddress: localAddress
+    };
+  }
+  return host; // for v0.11 or later
+}
+
+function mergeOptions(target) {
+  for (var i = 1, len = arguments.length; i < len; ++i) {
+    var overrides = arguments[i];
+    if (typeof overrides === 'object') {
+      var keys = Object.keys(overrides);
+      for (var j = 0, keyLen = keys.length; j < keyLen; ++j) {
+        var k = keys[j];
+        if (overrides[k] !== undefined) {
+          target[k] = overrides[k];
+        }
+      }
+    }
+  }
+  return target;
+}
+
+
+var debug;
+if (process.env.NODE_DEBUG && /\btunnel\b/.test(process.env.NODE_DEBUG)) {
+  debug = function() {
+    var args = Array.prototype.slice.call(arguments);
+    if (typeof args[0] === 'string') {
+      args[0] = 'TUNNEL: ' + args[0];
+    } else {
+      args.unshift('TUNNEL:');
+    }
+    console.error.apply(console, args);
+  }
+} else {
+  debug = function() {};
+}
+exports.debug = debug; // for test
+
+
+/***/ }),
+
 /***/ 7786:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Node = __nccwpck_require__(9752);
@@ -2194,6 +3255,7 @@ exports.composeCollection = composeCollection;
 /***/ 9157:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Document = __nccwpck_require__(1785);
@@ -2242,6 +3304,7 @@ exports.composeDoc = composeDoc;
 /***/ 6572:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Alias = __nccwpck_require__(9712);
@@ -2331,6 +3394,7 @@ exports.composeNode = composeNode;
 /***/ 1490:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Node = __nccwpck_require__(9752);
@@ -2354,7 +3418,8 @@ function composeScalar(ctx, token, tagToken, onError) {
         scalar = Node.isScalar(res) ? res : new Scalar.Scalar(res);
     }
     catch (error) {
-        onError(tagToken || token, 'TAG_RESOLVE_FAILED', error.message);
+        const msg = error instanceof Error ? error.message : String(error);
+        onError(tagToken || token, 'TAG_RESOLVE_FAILED', msg);
         scalar = new Scalar.Scalar(value);
     }
     scalar.range = range;
@@ -2414,6 +3479,7 @@ exports.composeScalar = composeScalar;
 /***/ 9386:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var directives = __nccwpck_require__(8729);
@@ -2644,6 +3710,7 @@ exports.Composer = Composer;
 /***/ 6638:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Pair = __nccwpck_require__(3497);
@@ -2746,6 +3813,7 @@ exports.resolveBlockMap = resolveBlockMap;
 /***/ 8172:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Scalar = __nccwpck_require__(8160);
@@ -2940,6 +4008,7 @@ exports.resolveBlockScalar = resolveBlockScalar;
 /***/ 2257:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var YAMLSeq = __nccwpck_require__(3810);
@@ -2989,6 +4058,7 @@ exports.resolveBlockSeq = resolveBlockSeq;
 /***/ 1789:
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 function resolveEnd(end, offset, reqSpace, onError) {
@@ -3035,6 +4105,7 @@ exports.resolveEnd = resolveEnd;
 /***/ 6085:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Node = __nccwpck_require__(9752);
@@ -3233,6 +4304,7 @@ exports.resolveFlowCollection = resolveFlowCollection;
 /***/ 6390:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Scalar = __nccwpck_require__(8160);
@@ -3372,6 +4444,12 @@ function doubleQuotedValue(source, onError) {
                 while (next === ' ' || next === '\t')
                     next = source[++i + 1];
             }
+            else if (next === '\r' && source[i + 1] === '\n') {
+                // skip escaped CRLF newlines, but still trim the following line
+                next = source[++i + 1];
+                while (next === ' ' || next === '\t')
+                    next = source[++i + 1];
+            }
             else if (next === 'x' || next === 'u' || next === 'U') {
                 const length = { x: 2, u: 4, U: 8 }[next];
                 res += parseCharCode(source, i + 1, length, onError);
@@ -3389,7 +4467,7 @@ function doubleQuotedValue(source, onError) {
             let next = source[i + 1];
             while (next === ' ' || next === '\t')
                 next = source[++i + 1];
-            if (next !== '\n')
+            if (next !== '\n' && !(next === '\r' && source[i + 2] === '\n'))
                 res += i > wsStart ? source.slice(wsStart, i + 1) : ch;
         }
         else {
@@ -3459,6 +4537,7 @@ exports.resolveFlowScalar = resolveFlowScalar;
 /***/ 9663:
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 function resolveProps(tokens, { flow, indicator, next, offset, onError, startOnNewline }) {
@@ -3594,6 +4673,7 @@ exports.resolveProps = resolveProps;
 /***/ 7801:
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 function containsNewline(key) {
@@ -3637,6 +4717,7 @@ exports.containsNewline = containsNewline;
 /***/ 8517:
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 function emptyScalarPosition(offset, before, pos) {
@@ -3673,6 +4754,7 @@ exports.emptyScalarPosition = emptyScalarPosition;
 /***/ 379:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Node = __nccwpck_require__(9752);
@@ -3699,6 +4781,7 @@ exports.mapIncludes = mapIncludes;
 /***/ 1785:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Alias = __nccwpck_require__(9712);
@@ -3751,6 +4834,29 @@ class Document {
             this.contents = this.createNode(value, _replacer, options$1);
         }
     }
+    /**
+     * Create a deep copy of this Document and its contents.
+     *
+     * Custom Node values that inherit from `Object` still refer to their original instances.
+     */
+    clone() {
+        const copy = Object.create(Document.prototype, {
+            [Node.NODE_TYPE]: { value: Node.DOC }
+        });
+        copy.commentBefore = this.commentBefore;
+        copy.comment = this.comment;
+        copy.errors = this.errors.slice();
+        copy.warnings = this.warnings.slice();
+        copy.options = Object.assign({}, this.options);
+        copy.directives = this.directives.clone();
+        copy.schema = this.schema.clone();
+        copy.contents = Node.isNode(this.contents)
+            ? this.contents.clone(copy.schema)
+            : this.contents;
+        if (this.range)
+            copy.range = this.range.slice();
+        return copy;
+    }
     /** Adds a value to the document. */
     add(value) {
         if (assertCollection(this.contents))
@@ -3795,9 +4901,10 @@ class Document {
             options = replacer;
             replacer = undefined;
         }
-        const { anchorPrefix, flow, keepUndefined, onTagObj, tag } = options || {};
+        const { aliasDuplicateObjects, anchorPrefix, flow, keepUndefined, onTagObj, tag } = options || {};
         const { onAnchor, setAnchors, sourceObjects } = anchors.createNodeAnchors(this, anchorPrefix || 'a');
         const ctx = {
+            aliasDuplicateObjects: aliasDuplicateObjects !== null && aliasDuplicateObjects !== void 0 ? aliasDuplicateObjects : true,
             keepUndefined: keepUndefined !== null && keepUndefined !== void 0 ? keepUndefined : false,
             onAnchor,
             onTagObj,
@@ -3983,6 +5090,7 @@ exports.Document = Document;
 /***/ 584:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Node = __nccwpck_require__(9752);
@@ -4067,6 +5175,7 @@ exports.findNewAnchor = findNewAnchor;
 /***/ 9833:
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 /**
@@ -4130,6 +5239,7 @@ exports.applyReviver = applyReviver;
 /***/ 9807:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Alias = __nccwpck_require__(9712);
@@ -4149,6 +5259,8 @@ function findTagObject(value, tagName, tags) {
 }
 function createNode(value, tagName, ctx) {
     var _a, _b;
+    if (Node.isDocument(value))
+        value = value.contents;
     if (Node.isNode(value))
         return value;
     if (Node.isPair(value)) {
@@ -4164,11 +5276,11 @@ function createNode(value, tagName, ctx) {
         // https://tc39.es/ecma262/#sec-serializejsonproperty
         value = value.valueOf();
     }
-    const { onAnchor, onTagObj, schema, sourceObjects } = ctx;
+    const { aliasDuplicateObjects, onAnchor, onTagObj, schema, sourceObjects } = ctx;
     // Detect duplicate references to the same object & use Alias nodes for all
     // after first. The `ref` wrapper allows for circular references to resolve.
     let ref = undefined;
-    if (value && typeof value === 'object') {
+    if (aliasDuplicateObjects && value && typeof value === 'object') {
         ref = sourceObjects.get(value);
         if (ref) {
             if (!ref.anchor)
@@ -4221,6 +5333,7 @@ exports.createNode = createNode;
 /***/ 8729:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Node = __nccwpck_require__(9752);
@@ -4244,6 +5357,11 @@ class Directives {
         this.marker = null;
         this.yaml = Object.assign({}, Directives.defaultYaml, yaml);
         this.tags = Object.assign({}, Directives.defaultTags, tags);
+    }
+    clone() {
+        const copy = new Directives(this.yaml, this.tags);
+        copy.marker = this.marker;
+        return copy;
     }
     /**
      * During parsing, get a Directives instance for the current document and
@@ -4391,6 +5509,7 @@ exports.Directives = Directives;
 /***/ 3305:
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 class YAMLError extends Error {
@@ -4460,6 +5579,7 @@ exports.prettifyError = prettifyError;
 /***/ 5065:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var composer = __nccwpck_require__(9386);
@@ -4518,6 +5638,7 @@ exports.visit = visit.visit;
 /***/ 469:
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 function debug(logLevel, ...messages) {
@@ -4542,6 +5663,7 @@ exports.warn = warn;
 /***/ 9712:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var anchors = __nccwpck_require__(584);
@@ -4645,6 +5767,7 @@ exports.Alias = Alias;
 /***/ 9797:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var createNode = __nccwpck_require__(9807);
@@ -4660,19 +5783,14 @@ function collectionFromPath(schema, path, value) {
             v = a;
         }
         else {
-            const o = {};
-            Object.defineProperty(o, typeof k === 'symbol' ? k : String(k), {
-                value: v,
-                writable: true,
-                enumerable: true,
-                configurable: true
-            });
-            v = o;
+            v = new Map([[k, v]]);
         }
     }
     return createNode.createNode(v, undefined, {
-        onAnchor() {
-            throw new Error('Repeated objects are not supported here');
+        aliasDuplicateObjects: false,
+        keepUndefined: false,
+        onAnchor: () => {
+            throw new Error('This should not happen, please report a bug.');
         },
         schema,
         sourceObjects: new Map()
@@ -4690,6 +5808,20 @@ class Collection extends Node.NodeBase {
             enumerable: false,
             writable: true
         });
+    }
+    /**
+     * Create a copy of this collection.
+     *
+     * @param schema - If defined, overwrites the original's schema
+     */
+    clone(schema) {
+        const copy = Object.create(Object.getPrototypeOf(this), Object.getOwnPropertyDescriptors(this));
+        if (schema)
+            copy.schema = schema;
+        copy.items = copy.items.map(it => Node.isNode(it) || Node.isPair(it) ? it.clone(schema) : it);
+        if (this.range)
+            copy.range = this.range.slice();
+        return copy;
     }
     /**
      * Adds a value to the collection. For `!!map` and `!!omap` the value must
@@ -4789,6 +5921,7 @@ exports.isEmptyPath = isEmptyPath;
 /***/ 9752:
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 const ALIAS = Symbol.for('yaml.alias');
@@ -4829,6 +5962,13 @@ class NodeBase {
     constructor(type) {
         Object.defineProperty(this, NODE_TYPE, { value: type });
     }
+    /** Create a copy of this node.  */
+    clone() {
+        const copy = Object.create(Object.getPrototypeOf(this), Object.getOwnPropertyDescriptors(this));
+        if (this.range)
+            copy.range = this.range.slice();
+        return copy;
+    }
 }
 
 exports.ALIAS = ALIAS;
@@ -4855,6 +5995,7 @@ exports.isSeq = isSeq;
 /***/ 3497:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var createNode = __nccwpck_require__(9807);
@@ -4872,6 +6013,14 @@ class Pair {
         Object.defineProperty(this, Node.NODE_TYPE, { value: Node.PAIR });
         this.key = key;
         this.value = value;
+    }
+    clone(schema) {
+        let { key, value } = this;
+        if (Node.isNode(key))
+            key = key.clone(schema);
+        if (Node.isNode(value))
+            value = value.clone(schema);
+        return new Pair(key, value);
     }
     toJSON(_, ctx) {
         const pair = ctx && ctx.mapAsMap ? new Map() : {};
@@ -4893,6 +6042,7 @@ exports.createPair = createPair;
 /***/ 8160:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Node = __nccwpck_require__(9752);
@@ -4926,6 +6076,7 @@ exports.isScalarValue = isScalarValue;
 /***/ 6761:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var stringifyCollection = __nccwpck_require__(3541);
@@ -5052,6 +6203,7 @@ exports.findPair = findPair;
 /***/ 3810:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var stringifyCollection = __nccwpck_require__(3541);
@@ -5166,6 +6318,7 @@ exports.YAMLSeq = YAMLSeq;
 /***/ 5193:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var log = __nccwpck_require__(469);
@@ -5278,6 +6431,7 @@ exports.addPairToJSMap = addPairToJSMap;
 /***/ 8842:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Node = __nccwpck_require__(9752);
@@ -5322,6 +6476,7 @@ exports.toJS = toJS;
 /***/ 1501:
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 /**
@@ -5348,6 +6503,7 @@ exports.defaultOptions = defaultOptions;
 /***/ 4000:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var resolveBlockScalar = __nccwpck_require__(8172);
@@ -5578,6 +6734,7 @@ exports.setScalarValue = setScalarValue;
 /***/ 28:
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 /**
@@ -5648,6 +6805,7 @@ exports.stringify = stringify;
 /***/ 1621:
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 const BREAK = Symbol('break visit');
@@ -5754,6 +6912,7 @@ exports.visit = visit;
 /***/ 9726:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var cstScalar = __nccwpck_require__(4000);
@@ -5873,6 +7032,7 @@ exports.tokenType = tokenType;
 /***/ 7263:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var cst = __nccwpck_require__(9726);
@@ -6011,6 +7171,8 @@ class Lexer {
         this.indentNext = 0;
         /** Indentation level of the current line. */
         this.indentValue = 0;
+        /** Position of the next \n character. */
+        this.lineEndPos = null;
         /** Stores the state of the lexer if reaching the end of incpomplete input */
         this.next = null;
         /** A pointer to `buffer`; the current position of the lexer. */
@@ -6023,8 +7185,10 @@ class Lexer {
      * @returns A generator of lexical tokens
      */
     *lex(source, incomplete = false) {
-        if (source)
+        if (source) {
             this.buffer = this.buffer ? this.buffer + source : source;
+            this.lineEndPos = null;
+        }
         this.atEnd = !incomplete;
         let next = this.next || 'stream';
         while (next && (incomplete || this.hasChars(1)))
@@ -6067,7 +7231,11 @@ class Lexer {
         return offset;
     }
     getLine() {
-        let end = this.buffer.indexOf('\n', this.pos);
+        let end = this.lineEndPos;
+        if (typeof end !== 'number' || (end !== -1 && end < this.pos)) {
+            end = this.buffer.indexOf('\n', this.pos);
+            this.lineEndPos = end;
+        }
         if (end === -1)
             return this.atEnd ? this.buffer.substring(this.pos) : null;
         if (this.buffer[end - 1] === '\r')
@@ -6080,6 +7248,7 @@ class Lexer {
     setNext(state) {
         this.buffer = this.buffer.substring(this.pos);
         this.pos = 0;
+        this.lineEndPos = null;
         this.next = state;
         return null;
     }
@@ -6310,17 +7479,19 @@ class Lexer {
                 end = this.buffer.indexOf('"', end + 1);
             }
         }
-        let nl = this.buffer.indexOf('\n', this.pos);
-        if (nl !== -1 && nl < end) {
-            while (nl !== -1 && nl < end) {
+        // Only looking for newlines within the quotes
+        const qb = this.buffer.substring(0, end);
+        let nl = qb.indexOf('\n', this.pos);
+        if (nl !== -1) {
+            while (nl !== -1) {
                 const cs = this.continueScalar(nl + 1);
                 if (cs === -1)
                     break;
-                nl = this.buffer.indexOf('\n', cs);
+                nl = qb.indexOf('\n', cs);
             }
-            if (nl !== -1 && nl < end) {
+            if (nl !== -1) {
                 // this is an error caused by an unexpected unindent
-                end = nl - 1;
+                end = nl - (qb[nl - 1] === '\r' ? 2 : 1);
             }
         }
         if (end === -1) {
@@ -6420,17 +7591,18 @@ class Lexer {
                 end = i;
             }
             else if (isEmpty(ch)) {
-                const next = this.buffer[i + 1];
-                if (next === '#' || (inFlow && invalidFlowScalarChars.includes(next)))
-                    break;
+                let next = this.buffer[i + 1];
                 if (ch === '\r') {
                     if (next === '\n') {
                         i += 1;
                         ch = '\n';
+                        next = this.buffer[i + 1];
                     }
                     else
                         end = i;
                 }
+                if (next === '#' || (inFlow && invalidFlowScalarChars.includes(next)))
+                    break;
                 if (ch === '\n') {
                     const cs = this.continueScalar(i + 1);
                     if (cs === -1)
@@ -6556,6 +7728,7 @@ exports.Lexer = Lexer;
 /***/ 5748:
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 /**
@@ -6604,6 +7777,7 @@ exports.LineCounter = LineCounter;
 /***/ 6466:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var cst = __nccwpck_require__(9726);
@@ -7491,6 +8665,7 @@ exports.Parser = Parser;
 /***/ 9191:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var composer = __nccwpck_require__(9386);
@@ -7604,6 +8779,7 @@ exports.stringify = stringify;
 /***/ 7425:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Node = __nccwpck_require__(9752);
@@ -7626,6 +8802,11 @@ class Schema {
         this.sortMapEntries =
             sortMapEntries === true ? sortMapEntriesByKey : sortMapEntries || null;
     }
+    clone() {
+        const copy = Object.create(Schema.prototype, Object.getOwnPropertyDescriptors(this));
+        copy.tags = this.tags.slice();
+        return copy;
+    }
 }
 
 exports.Schema = Schema;
@@ -7636,6 +8817,7 @@ exports.Schema = Schema;
 /***/ 1400:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Node = __nccwpck_require__(9752);
@@ -7687,6 +8869,7 @@ exports.map = map;
 /***/ 3394:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Scalar = __nccwpck_require__(8160);
@@ -7709,6 +8892,7 @@ exports.nullTag = nullTag;
 /***/ 6698:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var createNode = __nccwpck_require__(9807);
@@ -7751,6 +8935,7 @@ exports.seq = seq;
 /***/ 1576:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var stringifyString = __nccwpck_require__(6084);
@@ -7774,6 +8959,7 @@ exports.string = string;
 /***/ 7369:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Scalar = __nccwpck_require__(8160);
@@ -7802,6 +8988,7 @@ exports.boolTag = boolTag;
 /***/ 616:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Scalar = __nccwpck_require__(8160);
@@ -7853,6 +9040,7 @@ exports.floatNaN = floatNaN;
 /***/ 2521:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var stringifyNumber = __nccwpck_require__(780);
@@ -7902,6 +9090,7 @@ exports.intOct = intOct;
 /***/ 1467:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var map = __nccwpck_require__(1400);
@@ -7934,6 +9123,7 @@ exports.schema = schema;
 /***/ 8553:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Scalar = __nccwpck_require__(8160);
@@ -8005,6 +9195,7 @@ exports.schema = schema;
 /***/ 2102:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var map = __nccwpck_require__(1400);
@@ -8094,6 +9285,7 @@ exports.getTags = getTags;
 /***/ 5758:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Scalar = __nccwpck_require__(8160);
@@ -8169,6 +9361,7 @@ exports.binary = binary;
 /***/ 2684:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Scalar = __nccwpck_require__(8160);
@@ -8205,6 +9398,7 @@ exports.trueTag = trueTag;
 /***/ 8090:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Scalar = __nccwpck_require__(8160);
@@ -8259,6 +9453,7 @@ exports.floatNaN = floatNaN;
 /***/ 7254:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var stringifyNumber = __nccwpck_require__(780);
@@ -8342,6 +9537,7 @@ exports.intOct = intOct;
 /***/ 4486:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var YAMLSeq = __nccwpck_require__(3810);
@@ -8425,6 +9621,7 @@ exports.omap = omap;
 /***/ 5169:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Node = __nccwpck_require__(9752);
@@ -8513,6 +9710,7 @@ exports.resolvePairs = resolvePairs;
 /***/ 8536:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var map = __nccwpck_require__(1400);
@@ -8559,6 +9757,7 @@ exports.schema = schema;
 /***/ 9549:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Node = __nccwpck_require__(9752);
@@ -8656,6 +9855,7 @@ exports.set = set;
 /***/ 7717:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var stringifyNumber = __nccwpck_require__(780);
@@ -8768,6 +9968,7 @@ exports.timestamp = timestamp;
 /***/ 1883:
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 const FOLD_FLOW = 'flow';
@@ -8915,6 +10116,7 @@ exports.foldFlowLines = foldFlowLines;
 /***/ 1922:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var anchors = __nccwpck_require__(584);
@@ -9019,6 +10221,7 @@ exports.stringify = stringify;
 /***/ 3541:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Collection = __nccwpck_require__(9797);
@@ -9150,6 +10353,7 @@ exports.stringifyCollection = stringifyCollection;
 /***/ 5577:
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 const stringifyComment = (comment, indent) => /^\n+$/.test(comment)
@@ -9174,6 +10378,7 @@ exports.stringifyComment = stringifyComment;
 /***/ 9615:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Node = __nccwpck_require__(9752);
@@ -9247,6 +10452,7 @@ exports.stringifyDocument = stringifyDocument;
 /***/ 780:
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 function stringifyNumber({ format, minFractionDigits, tag, value }) {
@@ -9280,6 +10486,7 @@ exports.stringifyNumber = stringifyNumber;
 /***/ 10:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Node = __nccwpck_require__(9752);
@@ -9400,6 +10607,7 @@ exports.stringifyPair = stringifyPair;
 /***/ 6084:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Scalar = __nccwpck_require__(8160);
@@ -9725,6 +10933,7 @@ exports.stringifyString = stringifyString;
 /***/ 8234:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
+"use strict";
 
 
 var Node = __nccwpck_require__(9752);
@@ -9880,6 +11089,7 @@ exports.visit = visit;
 /***/ 2357:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("assert");
 
 /***/ }),
@@ -9887,6 +11097,7 @@ module.exports = require("assert");
 /***/ 3129:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("child_process");
 
 /***/ }),
@@ -9894,6 +11105,7 @@ module.exports = require("child_process");
 /***/ 8614:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("events");
 
 /***/ }),
@@ -9901,13 +11113,39 @@ module.exports = require("events");
 /***/ 5747:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("fs");
+
+/***/ }),
+
+/***/ 8605:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("http");
+
+/***/ }),
+
+/***/ 7211:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("https");
+
+/***/ }),
+
+/***/ 1631:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("net");
 
 /***/ }),
 
 /***/ 2087:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("os");
 
 /***/ }),
@@ -9915,6 +11153,7 @@ module.exports = require("os");
 /***/ 5622:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("path");
 
 /***/ }),
@@ -9922,6 +11161,7 @@ module.exports = require("path");
 /***/ 4304:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("string_decoder");
 
 /***/ }),
@@ -9929,13 +11169,23 @@ module.exports = require("string_decoder");
 /***/ 8213:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("timers");
+
+/***/ }),
+
+/***/ 4016:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("tls");
 
 /***/ }),
 
 /***/ 1669:
 /***/ ((module) => {
 
+"use strict";
 module.exports = require("util");
 
 /***/ })
