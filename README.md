@@ -1,3 +1,29 @@
+# Notice (2022.10.09)
+
+Development and maintenance of this GitHub Action is stopped because `pub` is officially supported by [Dependabot](https://dependabot.com/).
+Please consider to migrate over to Dependabot if you are using this GitHub Action.
+
+You can checkout the [official documentation](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file) for information on how to configure the Dependabot.
+Below is an example of the `dependabot.yml` for `pub`.
+```yml
+# Check the official documentation for the latest configuration
+# as the content here might be old (written on 2022/10/09).
+version: 2
+updates:
+  - package-ecosystem: "pub"
+    directory: "/"
+    schedule:
+      interval: "daily"
+```
+
+Also, you can check [this PR](https://github.com/kuanyi-ng/update-flutter-packages/pull/208) to get a sense of how Dependabot works with `pub`.
+
+Reference links:
+- [`pub` being listed as one of the supported ecosystem in the official documentation.](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#package-ecosystem)
+- [(GitHub Blog) pub beta support for Dependabot version updates](https://github.blog/changelog/2022-04-05-pub-beta-support-for-dependabot-version-updates/)
+- [(GitHub Blog) GitHub’s supply chain features now support Dart](https://github.blog/changelog/2022-10-06-githubs-supply-chain-features-now-support-dart/)
+- [(GitHub Blog) GitHub’s supply chain security features now support Dart](https://github.blog/2022-10-06-githubs-supply-chain-security-features-now-support-dart/)
+
 <p align="center">
   <a href="https://github.com/actions/typescript-action/actions"><img alt="typescript-action status" src="https://github.com/actions/typescript-action/workflows/build-test/badge.svg"></a>
 </p>
