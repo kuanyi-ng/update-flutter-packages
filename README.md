@@ -24,6 +24,8 @@ Reference links:
 - [(GitHub Blog) GitHub’s supply chain features now support Dart](https://github.blog/changelog/2022-10-06-githubs-supply-chain-features-now-support-dart/)
 - [(GitHub Blog) GitHub’s supply chain security features now support Dart](https://github.blog/2022-10-06-githubs-supply-chain-security-features-now-support-dart/)
 
+---
+
 <p align="center">
   <a href="https://github.com/actions/typescript-action/actions"><img alt="typescript-action status" src="https://github.com/actions/typescript-action/workflows/build-test/badge.svg"></a>
 </p>
